@@ -20,7 +20,7 @@ export default function Navbar() {
                         NH
                     </div>
                     <span className="text-xl font-display font-medium tracking-tight text-gray-800">
-                        Na Haeo <span className="text-[#FFB6C1] font-light">Botanics</span>
+                        Na Haeo <span className="text-[#FFB6C1] font-light">Glow</span>
                     </span>
                 </div>
 

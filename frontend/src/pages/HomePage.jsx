@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
-import NFCJourneySection from '../components/NFCJourneySection';
 import LandmarkSection from '../components/LandmarkSection';
 import ProductsSection from '../components/ProductsSection';
 import Footer from '../components/Footer';
@@ -77,7 +76,6 @@ export default function HomePage() {
 
             <Navbar />
             <HeroSection />
-            <NFCJourneySection />
             <LandmarkSection />
             <ProductsSection />
             <Footer />

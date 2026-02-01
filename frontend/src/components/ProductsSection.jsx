@@ -2,33 +2,37 @@ import { useState } from 'react';
 
 const products = [
     {
-        id: 'rose-petal',
-        name: 'นาแห้ว โบทานิกส์',
-        variant: 'ลิปบาล์ม กลีบกุหลาบ',
-        price: 690,
+        id: 'macadamia-original',
+        name: 'Na Haeo Glow',
+        variant: 'ลิปบาล์ม แมคคาเดเมีย ออริจินัล',
+        price: 199,
         colors: { from: '#FFD1DC', to: '#FFB6C1' },
         textColor: 'text-pink-700',
-        glowClass: 'hover:shadow-pink-glow'
+        glowClass: 'hover:shadow-pink-glow',
+        description: 'สูตรดั้งเดิม กักเก็บความชุ่มชื้น 95%'
     },
     {
-        id: 'peach-honey',
-        name: 'นาแห้ว ครีมี่',
-        variant: 'ลิปบาล์ม พีชน้ำผึ้ง',
-        price: 870,
+        id: 'macadamia-honey',
+        name: 'Na Haeo Glow',
+        variant: 'ลิปบาล์ม แมคคาเดเมีย น้ำผึ้ง',
+        price: 249,
         colors: { from: '#FFE5B4', to: '#FFDAB9' },
         textColor: 'text-amber-700',
-        glowClass: 'hover:shadow-peach-glow'
+        glowClass: 'hover:shadow-peach-glow',
+        description: 'ผสมน้ำผึ้งแท้ บำรุงริมฝีปากลึก'
     },
     {
-        id: 'fresh-mint',
-        name: 'นาแห้ว มิ้นต์',
-        variant: 'ลิปบาล์ม มิ้นต์สดชื่น',
-        price: 570,
+        id: 'macadamia-mint',
+        name: 'Na Haeo Glow',
+        variant: 'ลิปบาล์ม แมคคาเดเมีย มิ้นต์',
+        price: 199,
         colors: { from: '#98FF98', to: '#7AE47A' },
         textColor: 'text-green-700',
-        glowClass: 'hover:shadow-mint-glow'
+        glowClass: 'hover:shadow-mint-glow',
+        description: 'เย็นสดชื่น จากมิ้นต์ธรรมชาติ'
     }
 ];
+
 
 export default function ProductsSection() {
     const [favorites, setFavorites] = useState([]);

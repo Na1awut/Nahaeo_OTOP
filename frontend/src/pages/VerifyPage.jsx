@@ -187,7 +187,7 @@ export default function VerifyPage() {
                 <div className="max-w-md mx-auto flex items-center justify-center gap-3">
                     <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#FFD1DC] to-[#FFB6C1] flex items-center justify-center text-white font-bold text-sm shadow-pink-glow">NH</div>
                     <span className="text-xl font-display font-medium tracking-tight text-gray-800">
-                        Na Haeo <span className="text-[#FFB6C1] font-light">Botanics</span>
+                        Na Haeo <span className="text-[#FFB6C1] font-light">Glow</span>
                     </span>
                 </div>
             </header>
@@ -281,10 +281,10 @@ export default function VerifyPage() {
                                 <span className="material-symbols-outlined text-5xl text-[#FFB6C1]">contactless</span>
                             </div>
 
-                            <h1 className="font-display text-2xl font-bold text-gray-900 mb-3">กรุณาแตะที่สินค้า</h1>
+                            <h1 className="font-display text-2xl font-bold text-gray-900 mb-3">ยืนยันสินค้าแท้</h1>
                             <p className="text-[#6B6B6B] font-light mb-6">
-                                หรือ สแกน QR Code หลังกล่อง<br />
-                                เพื่อยืนยันว่าเป็นสินค้าแท้จากนาแห้ว โบทานิกส์
+                                แตะ NFC หรือสแกน QR Code บนกล่องผลิตภัณฑ์<br />
+                                เพื่อยืนยันว่าเป็นสินค้าแท้จาก Na Haeo Glow
                             </p>
 
                             {/* NFC/QR Buttons */}
@@ -310,7 +310,7 @@ export default function VerifyPage() {
                             </div>
 
                             {/* Manual Input Option */}
-                            <div className="mb-6">
+                            <div className="mb-8">
                                 <p className="text-sm text-[#6B6B6B] mb-3">หรือกรอกรหัสสินค้าด้วยตนเอง:</p>
                                 <div className="flex gap-2">
                                     <input
@@ -328,6 +328,47 @@ export default function VerifyPage() {
                                     </button>
                                 </div>
                             </div>
+
+                            {/* How to Use Guide - Compact Version */}
+                            <div className="border-t border-gray-200 pt-6">
+                                <h3 className="font-display font-semibold text-sm text-gray-700 mb-4">
+                                    📖 วิธีใช้งาน 3 ขั้นตอนง่ายๆ
+                                </h3>
+                                <div className="grid grid-cols-3 gap-3">
+                                    {/* Step 1 */}
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FFD1DC]/40 to-[#FFB6C1]/40 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-xl text-gray-600">phonelink_ring</span>
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-xs font-medium text-gray-700">แตะ NFC</p>
+                                            <p className="text-[10px] text-[#6B6B6B]">นำโทรศัพท์ใกล้กล่อง</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Step 2 */}
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FFE5B4]/40 to-[#FFDAB9]/40 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-xl text-gray-600">verified</span>
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-xs font-medium text-gray-700">ยืนยันสินค้า</p>
+                                            <p className="text-[10px] text-[#6B6B6B]">ตรวจสอบความแท้</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Step 3 */}
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#98FF98]/40 to-[#7AE47A]/40 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-xl text-[#FFB6C1]">view_in_ar</span>
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-xs font-medium text-gray-700">เข้าสู่ AR</p>
+                                            <p className="text-[10px] text-[#6B6B6B]">สัมผัสประสบการณ์ใหม่</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
 
@@ -336,7 +377,7 @@ export default function VerifyPage() {
 
             {/* Footer */}
             <footer className="relative z-10 py-6 text-center">
-                <p className="text-xs text-[#6B6B6B] font-light">© 2026 นาแห้ว โบทานิกส์ • ระบบยืนยันสินค้าแท้</p>
+                <p className="text-xs text-[#6B6B6B] font-light">© 2026 Na Haeo Glow • ระบบยืนยันสินค้าแท้</p>
             </footer>
         </div>
     );

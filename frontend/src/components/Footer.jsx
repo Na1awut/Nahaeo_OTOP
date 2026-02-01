@@ -8,10 +8,10 @@ export default function Footer() {
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FFD1DC] to-[#FFB6C1] flex items-center justify-center text-white font-bold text-sm shadow-pink-glow">
                                 NH
                             </div>
-                            <h5 className="font-display text-xl font-bold text-gray-900">นาแห้ว โบทานิกส์</h5>
+                            <h5 className="font-display text-xl font-bold text-gray-900">Na Haeo Glow</h5>
                         </div>
-                        <p className="text-sm text-[#6B6B6B] font-light">OTOP ระดับเยี่ยม จากจังหวัดเลย ประเทศไทย</p>
-                        <p className="text-sm text-[#6B6B6B] font-light mt-1">เชื่อมต่อประเพณีและเทคโนโลยี</p>
+                        <p className="text-sm text-[#6B6B6B] font-light">ลิปบาล์มแมคคาเดเมียออร์แกนิก จากอำเภอนาแห้ว จังหวัดเลย</p>
+                        <p className="text-sm text-[#6B6B6B] font-light mt-1">สนับสนุนเกษตรกรชุมชน ผลิตภัณฑ์ OTOP คุณภาพ</p>
                     </div>
                     <div className="flex gap-4">
                         <a className="w-11 h-11 rounded-full glass flex items-center justify-center text-gray-500 hover:text-[#FFB6C1] hover:bg-[#FFD1DC]/50 transition-all duration-300" href="#">
@@ -26,7 +26,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="border-t border-white/40 mt-12 pt-8 text-center">
-                    <p className="text-xs text-[#6B6B6B] font-light">© 2026 นาแห้ว โบทานิกส์ สงวนลิขสิทธิ์ • สร้างด้วย 💖 ในประเทศไทย</p>
+                    <p className="text-xs text-[#6B6B6B] font-light">© 2026 Na Haeo Glow สงวนลิขสิทธิ์ • Organic Macadamia Lip Balm จากนาแห้ว</p>
                 </div>
             </div>
         </footer>

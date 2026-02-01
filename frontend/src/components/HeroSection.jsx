@@ -10,20 +10,20 @@ export default function HeroSection() {
                 {/* Left Content */}
                 <div className="space-y-8 relative">
                     <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass border-[#FFD1DC]/30 text-xs font-semibold text-[#FFB6C1] shadow-soft">
-                        <span className="material-symbols-outlined text-sm">view_in_ar</span>
-                        ลิปบาล์ม OTOP x ประสบการณ์ WebAR
+                        <span className="material-symbols-outlined text-sm">eco</span>
+                        Organic Macadamia Lip Balm x WebAR
                     </div>
 
                     <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-semibold leading-[1.08] text-gray-900">
-                        Tap to Bloom:
+                        Na Haeo Glow:
                         <span className="block mt-3 text-4xl md:text-5xl lg:text-6xl font-light bg-gradient-to-r from-[#FFD1DC] via-[#FFB6C1] to-[#FFE5B4] bg-clip-text text-transparent">
-                            สัมผัสศรัทธานาแห้วในมิติใหม่
+                            ลิปบาล์มแมคคาเดเมียออร์แกนิก
                         </span>
                     </h1>
 
                     <p className="text-lg text-[#6B6B6B] max-w-lg font-light leading-relaxed">
-                        สัมผัสจิตวิญญาณนาแห้วผ่านเทคโนโลยี WebAR ที่ล้ำสมัย นำประเพณีต้นดอกไม้ 400 ปี
-                        มาสู่มิติใหม่เพียงปลายนิ้วสัมผัส
+                        กักเก็บความชุ่มชื้นได้ถึง 95% ด้วยน้ำมันแมคคาเดเมียจากนาแห้ว จ.เลย
+                        ปลอดสารเคมี 100% สนับสนุนเกษตรกรในชุมชน
                     </p>
 
                     <div className="flex items-center gap-5 pt-4">
