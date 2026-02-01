@@ -1,14 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { Html5Qrcode } from 'html5-qrcode';
 import { verifyProduct } from '../lib/firebase';
 
 export default function VerifyPage() {
     const [searchParams] = useSearchParams();
     const productId = searchParams.get('id');
 
-    const [status, setStatus] = useState('loading'); // loading, success, error, no-id
+    const [status, setStatus] = useState('loading'); // loading, success, error, no-id, scanning
     const [productData, setProductData] = useState(null);
     const [manualId, setManualId] = useState('');
+    const [showScanner, setShowScanner] = useState(false);
+    const [scannerError, setScannerError] = useState('');
+    const scannerRef = useRef(null);
+    const html5QrCodeRef = useRef(null);
 
     useEffect(() => {
         if (productId) {
@@ -18,6 +23,13 @@ export default function VerifyPage() {
         }
     }, [productId]);
 
+    // Cleanup scanner on unmount
+    useEffect(() => {
+        return () => {
+            stopScanner();
+        };
+    }, []);
+
     const verify = async (id) => {
         setStatus('loading');
         try {
@@ -25,6 +37,9 @@ export default function VerifyPage() {
             if (result.valid) {
                 setProductData(result.data);
                 setStatus('success');
+                // Save verified status to localStorage for access control
+                localStorage.setItem('nahaeo_verified', 'true');
+                localStorage.setItem('nahaeo_verified_time', Date.now().toString());
             } else {
                 setStatus('error');
             }
@@ -38,6 +53,75 @@ export default function VerifyPage() {
         if (manualId.trim()) {
             verify(manualId.trim());
         }
+    };
+
+    const startScanner = async () => {
+        setShowScanner(true);
+        setScannerError('');
+
+        // Wait for DOM to render
+        setTimeout(async () => {
+            try {
+                const html5QrCode = new Html5Qrcode("qr-reader");
+                html5QrCodeRef.current = html5QrCode;
+
+                await html5QrCode.start(
+                    { facingMode: "environment" },
+                    {
+                        fps: 10,
+                        qrbox: { width: 250, height: 250 }
+                    },
+                    (decodedText) => {
+                        // Handle successful scan
+                        handleScanSuccess(decodedText);
+                    },
+                    (errorMessage) => {
+                        // Ignore scan errors (no QR found in frame)
+                    }
+                );
+            } catch (err) {
+                console.error("Scanner error:", err);
+                setScannerError('ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการใช้งานกล้อง');
+            }
+        }, 100);
+    };
+
+    const stopScanner = async () => {
+        if (html5QrCodeRef.current) {
+            try {
+                await html5QrCodeRef.current.stop();
+                html5QrCodeRef.current = null;
+            } catch (err) {
+                console.error("Error stopping scanner:", err);
+            }
+        }
+        setShowScanner(false);
+    };
+
+    const handleScanSuccess = (decodedText) => {
+        // Stop scanner first
+        stopScanner();
+
+        // Extract product ID from URL or plain text
+        let extractedId = decodedText;
+
+        // If it's a URL, extract the ID parameter
+        try {
+            if (decodedText.includes('verify?id=')) {
+                const url = new URL(decodedText);
+                extractedId = url.searchParams.get('id') || decodedText;
+            } else if (decodedText.includes('id=')) {
+                const params = new URLSearchParams(decodedText.split('?')[1]);
+                extractedId = params.get('id') || decodedText;
+            }
+        } catch (e) {
+            // If URL parsing fails, use the raw text
+            extractedId = decodedText;
+        }
+
+        // Set the ID and verify
+        setManualId(extractedId);
+        verify(extractedId);
     };
 
     const formatDate = (timestamp) => {
@@ -56,6 +140,47 @@ export default function VerifyPage() {
             <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-pattern">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-[#FFE5B4]/20 to-transparent rounded-full blur-3xl"></div>
             </div>
+
+            {/* QR Scanner Modal */}
+            {showScanner && (
+                <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl p-6 w-full max-w-sm">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-display font-bold text-lg text-gray-800">สแกน QR Code</h3>
+                            <button
+                                onClick={stopScanner}
+                                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-gray-600">close</span>
+                            </button>
+                        </div>
+
+                        {scannerError ? (
+                            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+                                <p className="text-red-600 text-sm">{scannerError}</p>
+                                <button
+                                    onClick={startScanner}
+                                    className="mt-3 px-4 py-2 bg-red-100 text-red-600 rounded-lg text-sm font-medium"
+                                >
+                                    ลองอีกครั้ง
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <div
+                                    id="qr-reader"
+                                    ref={scannerRef}
+                                    className="rounded-2xl overflow-hidden bg-gray-100"
+                                    style={{ width: '100%', minHeight: '300px' }}
+                                ></div>
+                                <p className="text-center text-sm text-[#6B6B6B] mt-4">
+                                    วาง QR Code ให้อยู่ในกรอบ
+                                </p>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Header */}
             <header className="relative z-50 px-6 py-5">
@@ -140,24 +265,53 @@ export default function VerifyPage() {
                                 <p className="text-xs text-red-500">หากท่านซื้อสินค้านี้มา กรุณาติดต่อร้านค้าเพื่อตรวจสอบ</p>
                             </div>
 
-                            <Link to="/" className="inline-block py-3 px-6 rounded-xl glass-strong text-gray-600 font-semibold hover:bg-white transition-colors">
-                                กลับหน้าหลัก
-                            </Link>
+                            <button
+                                onClick={() => setStatus('no-id')}
+                                className="inline-block py-3 px-6 rounded-xl glass-strong text-gray-600 font-semibold hover:bg-white transition-colors"
+                            >
+                                ลองสแกนใหม่
+                            </button>
                         </div>
                     )}
 
                     {/* No ID State */}
                     {status === 'no-id' && (
                         <div className="glass-strong rounded-[2rem] p-8 shadow-soft text-center">
-                            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#FFE5B4]/50 to-[#FFD1DC]/50 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-4xl text-[#FFB6C1]">qr_code_scanner</span>
+                            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#FFE5B4]/50 to-[#FFD1DC]/50 flex items-center justify-center">
+                                <span className="material-symbols-outlined text-5xl text-[#FFB6C1]">contactless</span>
                             </div>
 
-                            <h1 className="font-display text-2xl font-bold text-gray-900 mb-2">ยืนยันสินค้าแท้</h1>
-                            <p className="text-[#6B6B6B] font-light mb-6">สแกน QR Code หรือแตะ NFC บนกล่องสินค้าเพื่อยืนยัน</p>
+                            <h1 className="font-display text-2xl font-bold text-gray-900 mb-3">กรุณาแตะที่สินค้า</h1>
+                            <p className="text-[#6B6B6B] font-light mb-6">
+                                หรือ สแกน QR Code หลังกล่อง<br />
+                                เพื่อยืนยันว่าเป็นสินค้าแท้จากนาแห้ว โบทานิกส์
+                            </p>
 
+                            {/* NFC/QR Buttons */}
+                            <div className="bg-white/50 rounded-2xl p-5 mb-6">
+                                <div className="flex items-center justify-center gap-6">
+                                    <div className="text-center">
+                                        <div className="w-14 h-14 mx-auto mb-2 rounded-xl bg-gradient-to-br from-[#FFD1DC] to-[#FFB6C1] flex items-center justify-center cursor-not-allowed opacity-60">
+                                            <span className="material-symbols-outlined text-2xl text-white">nfc</span>
+                                        </div>
+                                        <p className="text-xs text-[#6B6B6B]">แตะ NFC</p>
+                                    </div>
+                                    <div className="text-[#6B6B6B] text-sm">หรือ</div>
+                                    <button
+                                        onClick={startScanner}
+                                        className="text-center group"
+                                    >
+                                        <div className="w-14 h-14 mx-auto mb-2 rounded-xl bg-gradient-to-br from-[#98FF98] to-[#7AE47A] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform cursor-pointer">
+                                            <span className="material-symbols-outlined text-2xl text-white">qr_code_scanner</span>
+                                        </div>
+                                        <p className="text-xs text-[#6B6B6B] group-hover:text-[#7AE47A] transition-colors">สแกน QR</p>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Manual Input Option */}
                             <div className="mb-6">
-                                <label className="block text-sm font-medium text-gray-700 mb-2 text-left">หรือกรอกรหัสสินค้า:</label>
+                                <p className="text-sm text-[#6B6B6B] mb-3">หรือกรอกรหัสสินค้าด้วยตนเอง:</p>
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
@@ -174,10 +328,6 @@ export default function VerifyPage() {
                                     </button>
                                 </div>
                             </div>
-
-                            <Link to="/" className="inline-block text-sm text-[#FFB6C1] font-medium hover:underline">
-                                ← กลับหน้าหลัก
-                            </Link>
                         </div>
                     )}
 
