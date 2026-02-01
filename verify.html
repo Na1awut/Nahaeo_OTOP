@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ยืนยันสินค้าแท้ - นาแห้ว โบทานิกส์</title>
+    <meta name="description" content="ยืนยันความแท้ของสินค้านาแห้ว โบทานิกส์ ผ่าน QR Code หรือ NFC" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="./js/tailwind.config.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+    <!-- Custom Styles -->
+    <link href="./css/styles.css" rel="stylesheet" />
+</head>
+
+<body class="bg-off-white text-text-main font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Background -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-pattern">
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-pastel-peach/20 to-transparent rounded-full blur-3xl">
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="relative z-50 px-6 py-5">
+        <div class="max-w-md mx-auto flex items-center justify-center gap-3">
+            <div
+                class="w-11 h-11 rounded-full bg-gradient-to-br from-pastel-pink to-pink-dark flex items-center justify-center text-white font-bold text-sm shadow-pink-glow">
+                NH</div>
+            <span class="text-xl font-display font-medium tracking-tight text-gray-800">Na Haeo <span
+                    class="text-pink-dark font-light">Botanics</span></span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center justify-center px-6 py-12 relative z-10">
+        <div class="w-full max-w-md">
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center">
+                <div class="glass-strong rounded-[2rem] p-8 shadow-soft">
+                    <div
+                        class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-pastel-pink/50 to-pastel-peach/50 flex items-center justify-center animate-pulse">
+                        <span class="material-symbols-outlined text-4xl text-pink-dark">search</span>
+                    </div>
+                    <h1 class="font-display text-2xl font-bold text-gray-900 mb-2">กำลังตรวจสอบ...</h1>
+                    <p class="text-text-soft font-light">กรุณารอสักครู่</p>
+                </div>
+            </div>
+
+            <!-- Success State -->
+            <div id="successState" class="hidden">
+                <div class="glass-strong rounded-[2rem] p-8 shadow-soft text-center">
+                    <!-- Success Icon -->
+                    <div
+                        class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-pastel-mint to-mint-dark flex items-center justify-center shadow-mint-glow">
+                        <span class="material-symbols-outlined text-5xl text-white">verified</span>
+                    </div>
+
+                    <h1 class="font-display text-2xl font-bold text-gray-900 mb-2">✅ สินค้าแท้!</h1>
+                    <p class="text-text-soft font-light mb-6">ยืนยันแล้วว่าเป็นสินค้าแท้จากนาแห้ว โบทานิกส์</p>
+
+                    <!-- Product Info -->
+                    <div id="productInfo" class="bg-white/50 rounded-2xl p-5 mb-6 text-left">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div
+                                class="w-16 h-16 rounded-xl bg-gradient-to-b from-pastel-pink to-pink-dark flex items-center justify-center">
+                                <span class="text-xs -rotate-90 text-white font-bold">NH</span>
+                            </div>
+                            <div>
+                                <h3 id="productName" class="font-display font-bold text-gray-800">ชื่อสินค้า</h3>
+                                <p id="productVariant" class="text-xs text-text-soft">รุ่นสินค้า</p>
+                            </div>
+                        </div>
+                        <div class="text-xs text-text-soft space-y-1">
+                            <p>🏭 Batch: <span id="batchNumber">-</span></p>
+                            <p>📅 ผลิตเมื่อ: <span id="createdAt">-</span></p>
+                            <p>👁️ สแกนครั้งที่: <span id="scanCount">-</span></p>
+                        </div>
+                    </div>
+
+                    <!-- AR Button -->
+                    <button onclick="launchAR()"
+                        class="w-full py-4 rounded-2xl btn-gradient text-gray-800 font-semibold flex items-center justify-center gap-2 shadow-pink-glow animate-glow">
+                        <span class="material-symbols-outlined">view_in_ar</span>
+                        เข้าสู่โลก AR
+                    </button>
+
+                    <a href="./index.html" class="inline-block mt-4 text-sm text-pink-dark font-medium hover:underline">
+                        ← กลับหน้าหลัก
+                    </a>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="hidden">
+                <div class="glass-strong rounded-[2rem] p-8 shadow-soft text-center">
+                    <!-- Error Icon -->
+                    <div
+                        class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-red-200 to-red-400 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-5xl text-white">error</span>
+                    </div>
+
+                    <h1 class="font-display text-2xl font-bold text-gray-900 mb-2">⚠️ ไม่พบสินค้า</h1>
+                    <p id="errorMessage" class="text-text-soft font-light mb-6">ไม่พบรหัสสินค้านี้ในระบบ</p>
+
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-left">
+                        <p class="text-sm text-red-600 font-medium mb-2">⚠️ คำเตือน</p>
+                        <p class="text-xs text-red-500">หากท่านซื้อสินค้านี้มา กรุณาติดต่อร้านค้าเพื่อตรวจสอบ</p>
+                    </div>
+
+                    <a href="./index.html"
+                        class="inline-block py-3 px-6 rounded-xl glass-strong text-gray-600 font-semibold hover:bg-white transition-colors">
+                        กลับหน้าหลัก
+                    </a>
+                </div>
+            </div>
+
+            <!-- No ID State -->
+            <div id="noIdState" class="hidden">
+                <div class="glass-strong rounded-[2rem] p-8 shadow-soft text-center">
+                    <div
+                        class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-pastel-peach/50 to-pastel-pink/50 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl text-pink-dark">qr_code_scanner</span>
+                    </div>
+
+                    <h1 class="font-display text-2xl font-bold text-gray-900 mb-2">ยืนยันสินค้าแท้</h1>
+                    <p class="text-text-soft font-light mb-6">สแกน QR Code หรือแตะ NFC บนกล่องสินค้าเพื่อยืนยัน</p>
+
+                    <!-- Manual Input -->
+                    <div class="mb-6">
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-2 text-left">หรือกรอกรหัสสินค้า:</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="manualProductId" placeholder="NH-XXXX-XXXX"
+                                class="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:border-pink-dark focus:ring-2 focus:ring-pink-dark/20 outline-none transition-all" />
+                            <button onclick="verifyManualInput()"
+                                class="px-5 py-3 rounded-xl btn-gradient text-gray-800 font-semibold">
+                                ตรวจสอบ
+                            </button>
+                        </div>
+                    </div>
+
+                    <a href="./index.html" class="inline-block text-sm text-pink-dark font-medium hover:underline">
+                        ← กลับหน้าหลัก
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-6 text-center">
+        <p class="text-xs text-text-soft font-light">© 2026 นาแห้ว โบทานิกส์ • ระบบยืนยันสินค้าแท้</p>
+    </footer>
+
+    <!-- Firebase & Verification Script -->
+    <script type="module">
+        import { verifyProduct } from './js/firebase-config.js';
+
+        // Get product ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        // UI Elements
+        const loadingState = document.getElementById('loadingState');
+        const successState = document.getElementById('successState');
+        const errorState = document.getElementById('errorState');
+        const noIdState = document.getElementById('noIdState');
+
+        // Show appropriate state
+        function showState(state) {
+            loadingState.classList.add('hidden');
+            successState.classList.add('hidden');
+            errorState.classList.add('hidden');
+            noIdState.classList.add('hidden');
+            state.classList.remove('hidden');
+        }
+
+        // Format date
+        function formatDate(timestamp) {
+            if (!timestamp) return '-';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Display product info
+        function displayProduct(data) {
+            document.getElementById('productName').textContent = data.name || 'นาแห้ว โบทานิกส์';
+            document.getElementById('productVariant').textContent = data.variant || '-';
+            document.getElementById('batchNumber').textContent = data.batchNumber || '-';
+            document.getElementById('createdAt').textContent = formatDate(data.createdAt);
+            document.getElementById('scanCount').textContent = (data.scanCount || 0) + 1;
+        }
+
+        // Verify product
+        async function verify(id) {
+            showState(loadingState);
+
+            try {
+                const result = await verifyProduct(id);
+
+                if (result.valid) {
+                    displayProduct(result.data);
+                    showState(successState);
+                } else {
+                    if (result.reason === 'inactive') {
+                        document.getElementById('errorMessage').textContent = 'สินค้านี้ถูกระงับการใช้งาน';
+                    } else if (result.reason === 'not_found') {
+                        document.getElementById('errorMessage').textContent = 'ไม่พบรหัสสินค้านี้ในระบบ';
+                    } else {
+                        document.getElementById('errorMessage').textContent = 'เกิดข้อผิดพลาด: ' + (result.error || 'Unknown error');
+                    }
+                    showState(errorState);
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                document.getElementById('errorMessage').textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อ';
+                showState(errorState);
+            }
+        }
+
+        // Manual input verification
+        window.verifyManualInput = function () {
+            const input = document.getElementById('manualProductId').value.trim();
+            if (input) {
+                verify(input);
+            }
+        };
+
+        // Launch AR
+        window.launchAR = function () {
+            // Redirect to AR experience
+            window.location.href = './index.html#ar';
+        };
+
+        // Initialize
+        if (productId) {
+            verify(productId);
+        } else {
+            showState(noIdState);
+        }
+    </script>
+
+</body>
+
+</html>
