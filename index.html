@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>นาแห้ว โบทานิกส์ - Tap to Bloom | ประสบการณ์ WebAR</title>
+    <meta name="description"
+        content="สัมผัสมรดกภูมิปัญญา OTOP ไทยผ่านเทคโนโลยี WebAR ที่ล้ำสมัย นาแห้ว โบทานิกส์ นำประเพณี 400 ปีมาสู่มิติใหม่" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        // Exact colors from skill.md
+                        "pastel-pink": "#FFD1DC",
+                        "pastel-peach": "#FFE5B4",
+                        "pastel-mint": "#98FF98",
+                        "off-white": "#FAFAFA",
+                        // Darker variants
+                        "pink-dark": "#FFB6C1",
+                        "peach-dark": "#FFDAB9",
+                        "mint-dark": "#7AE47A",
+                        // UI colors
+                        "text-main": "#2D2A26",
+                        "text-soft": "#6B6B6B",
+                    },
+                    fontFamily: {
+                        display: ["Kanit", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+                        'pink-glow': '0 20px 50px rgba(255, 182, 193, 0.5)',
+                        'mint-glow': '0 20px 50px rgba(152, 255, 152, 0.4)',
+                        'peach-glow': '0 20px 50px rgba(255, 229, 180, 0.5)',
+                        'soft': '0 10px 40px rgba(0, 0, 0, 0.08)',
+                    },
+                    animation: {
+                        'float-slow': 'float 8s ease-in-out infinite',
+                        'float-medium': 'float 6s ease-in-out infinite',
+                        'float-fast': 'float 4s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                        'pulse-soft': 'pulse 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(255, 209, 220, 0.5)' },
+                            '50%': { boxShadow: '0 0 40px rgba(255, 209, 220, 0.8)' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        /* Glassmorphism Classes */
+        .glass {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .glass-bubble {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.2) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 4px 20px rgba(255, 255, 255, 0.8), 0 15px 35px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Product Box Styling */
+        .product-box {
+            background: linear-gradient(135deg, var(--box-color-light) 0%, var(--box-color-dark) 100%);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Float Animation */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(var(--rot, 0deg));
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(var(--rot, 0deg));
+            }
+        }
+
+        /* Background Pattern */
+        .bg-pattern {
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(255, 209, 220, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(152, 255, 152, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 229, 180, 0.12) 0%, transparent 40%);
+        }
+
+        /* Gradient Button */
+        .btn-gradient {
+            background: linear-gradient(135deg, #FFD1DC 0%, #FFE5B4 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 182, 193, 0.5);
+        }
+
+        /* Section Divider Pattern */
+        .mosaic-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFD1DC' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* Modal Animations */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .modal-enter {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content-enter {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-enter {
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        /* Favorite Active State */
+        .favorite-active {
+            color: #FFB6C1 !important;
+        }
+
+        .favorite-active .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        /* Model Selector Active */
+        .model-btn-active {
+            background: white;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid #FFD1DC;
+        }
+
+        /* ===========================
+           Mobile Responsive Fixes
+           =========================== */
+
+        /* Hero Section - Mobile */
+        @media (max-width: 767px) {
+
+            /* Hero heading smaller on mobile */
+            .text-5xl {
+                font-size: 2.25rem !important;
+                line-height: 1.2 !important;
+            }
+
+            /* Thai text smaller on mobile */
+            .text-4xl {
+                font-size: 1.5rem !important;
+                line-height: 1.3 !important;
+            }
+
+            /* Hero buttons stack on mobile */
+            .flex.items-center.gap-5.pt-4 {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            /* Hide floating product boxes on mobile */
+            .animate-float-slow,
+            .animate-float-medium,
+            .animate-float-fast {
+                display: none !important;
+            }
+
+            /* Phone mockup smaller on mobile */
+            .relative.h-\[620px\] {
+                height: 400px !important;
+            }
+
+            .w-\[280px\].h-\[560px\] {
+                width: 200px !important;
+                height: 400px !important;
+            }
+
+            /* NFC section smaller heading */
+            .font-display.text-3xl {
+                font-size: 1.5rem !important;
+            }
+
+            /* NFC steps smaller circles */
+            .w-36.h-36 {
+                width: 5rem !important;
+                height: 5rem !important;
+            }
+
+            .w-36.h-36 .material-symbols-outlined.text-5xl {
+                font-size: 2rem !important;
+            }
+
+            /* 3D Selector - horizontal scroll on mobile */
+            .flex.gap-3.p-2\.5.rounded-2xl {
+                padding: 0.5rem;
+                gap: 0.5rem;
+            }
+
+            /* Model selector buttons smaller */
+            .model-btn .w-12.h-12 {
+                width: 2.5rem !important;
+                height: 2.5rem !important;
+            }
+
+            /* Product cards single column */
+            .grid.grid-cols-1.md\:grid-cols-3 {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Story card full width */
+            .lg\:w-2\/5,
+            .lg\:w-3\/5 {
+                width: 100% !important;
+            }
+        }
+
+        /* Small mobile (375px and below) */
+        @media (max-width: 375px) {
+            .text-5xl {
+                font-size: 1.875rem !important;
+            }
+
+            .text-4xl {
+                font-size: 1.25rem !important;
+            }
+
+            /* Even smaller phone mockup */
+            .relative.h-\[620px\] {
+                height: 350px !important;
+            }
+
+            .w-\[280px\].h-\[560px\] {
+                width: 180px !important;
+                height: 360px !important;
+            }
+        }
+
+        /* Video Container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-off-white text-text-main font-sans antialiased relative overflow-x-hidden selection:bg-pastel-pink selection:text-pink-900">
+
+    <!-- Background Decorative Elements -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-pattern">
+        <svg class="absolute -top-32 -left-32 w-[700px] h-[700px] text-pastel-pink opacity-40 animate-float-slow"
+            style="--rot: 0deg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M45.7,-76.3C58.9,-69.3,69.1,-55.5,76.3,-41.2C83.5,-26.9,87.6,-12.2,85.6,1.8C83.7,15.8,75.6,29.1,65.8,40.4C55.9,51.7,44.2,61,31.4,68.6C18.6,76.2,4.6,82.1,-8.2,80.3C-21,78.5,-32.6,69,-44.7,60.2C-56.8,51.4,-69.3,43.3,-76.1,31.8C-82.9,20.3,-83.9,5.4,-79.8,-7.8C-75.7,-21,-66.5,-32.5,-56.1,-41.5C-45.7,-50.5,-34.1,-57,-22.3,-65.1C-10.5,-73.2,1.5,-82.9,13.6,-82.3C25.7,-81.7,32.5,-70.8,45.7,-76.3Z"
+                fill="currentColor" transform="translate(100 100)"></path>
+        </svg>
+        <svg class="absolute -bottom-48 -right-32 w-[900px] h-[900px] text-pastel-mint opacity-30" viewBox="0 0 200 200"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M41.4,-73.3C52.7,-65.1,60.3,-50.7,67.6,-36.5C74.9,-22.3,81.9,-8.3,80.3,4.9C78.7,18.1,68.5,30.5,58.3,41.9C48.1,53.3,37.9,63.7,25.8,69.5C13.7,75.3,-0.3,76.5,-13.6,74.1C-26.9,71.7,-39.5,65.7,-50.3,56.7C-61.1,47.7,-70.1,35.7,-76.1,21.8C-82.1,7.9,-85.1,-7.9,-80.6,-21.8C-76.1,-35.7,-64.1,-47.7,-50.8,-55.1C-37.5,-62.5,-22.9,-65.3,-8.9,-66.6C5.1,-67.9,10.2,-67.7,16.4,-70.2C22.6,-72.7,30,-81.5,41.4,-73.3Z"
+                fill="currentColor" transform="translate(100 100)"></path>
+        </svg>
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-pastel-peach/10 to-transparent rounded-full blur-3xl">
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-50 px-6 py-5 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-11 h-11 rounded-full bg-gradient-to-br from-pastel-pink to-pink-dark flex items-center justify-center text-white font-bold text-sm shadow-pink-glow">
+                NH</div>
+            <span class="text-xl font-display font-medium tracking-tight text-gray-800">Na Haeo <span
+                    class="text-pink-dark font-light">Botanics</span></span>
+        </div>
+        <div class="hidden md:flex gap-10 text-sm font-medium text-text-soft">
+            <a class="nav-link hover:text-pink-dark transition-colors duration-300" href="#story">เรื่องราว</a>
+            <a class="nav-link hover:text-pink-dark transition-colors duration-300" href="#collection">สินค้า</a>
+            <a class="nav-link hover:text-pink-dark transition-colors duration-300" href="#ar">WebAR</a>
+            <a class="nav-link hover:text-pink-dark transition-colors duration-300" href="#contact">ติดต่อ</a>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="shopNowBtn"
+                class="hidden sm:block btn-gradient px-7 py-3 rounded-full text-sm font-semibold text-gray-800 shadow-pink-glow">
+                ช้อปเลย
+            </button>
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn"
+                class="md:hidden w-11 h-11 rounded-full glass flex items-center justify-center text-gray-600 hover:text-pink-dark transition-colors">
+                <span class="material-symbols-outlined text-2xl">menu</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 modal-overlay" onclick="closeMobileMenu()"></div>
+        <div
+            class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white/95 backdrop-blur-xl shadow-2xl mobile-menu-enter">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-10">
+                    <span class="text-lg font-display font-semibold text-gray-800">เมนู</span>
+                    <button onclick="closeMobileMenu()"
+                        class="w-10 h-10 rounded-full glass flex items-center justify-center text-gray-500 hover:text-pink-dark transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <div class="flex flex-col gap-6">
+                    <a onclick="closeMobileMenu()"
+                        class="nav-link text-lg font-medium text-gray-700 hover:text-pink-dark transition-colors flex items-center gap-3"
+                        href="#story">
+                        <span class="material-symbols-outlined text-pastel-pink">auto_stories</span>
+                        เรื่องราว
+                    </a>
+                    <a onclick="closeMobileMenu()"
+                        class="nav-link text-lg font-medium text-gray-700 hover:text-pink-dark transition-colors flex items-center gap-3"
+                        href="#collection">
+                        <span class="material-symbols-outlined text-pastel-peach">shopping_bag</span>
+                        สินค้า
+                    </a>
+                    <a onclick="closeMobileMenu()"
+                        class="nav-link text-lg font-medium text-gray-700 hover:text-pink-dark transition-colors flex items-center gap-3"
+                        href="#ar">
+                        <span class="material-symbols-outlined text-pastel-mint">view_in_ar</span>
+                        WebAR
+                    </a>
+                    <a onclick="closeMobileMenu()"
+                        class="nav-link text-lg font-medium text-gray-700 hover:text-pink-dark transition-colors flex items-center gap-3"
+                        href="#contact">
+                        <span class="material-symbols-outlined text-pink-dark">mail</span>
+                        ติดต่อ
+                    </a>
+                </div>
+                <div class="mt-10 pt-6 border-t border-gray-200">
+                    <button onclick="closeMobileMenu(); scrollToSection('#collection')"
+                        class="w-full btn-gradient px-7 py-4 rounded-2xl text-sm font-semibold text-gray-800 shadow-pink-glow">
+                        ช้อปเลย
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section
+        class="relative z-10 max-w-7xl mx-auto px-6 py-12 md:py-20 grid md:grid-cols-2 gap-12 items-center min-h-[88vh]">
+        <!-- Left Content -->
+        <div class="space-y-8 relative">
+            <div
+                class="inline-flex items-center gap-2 px-5 py-2 rounded-full glass border-pastel-pink/30 text-xs font-semibold text-pink-dark shadow-soft">
+                <span class="material-symbols-outlined text-sm">view_in_ar</span>
+                ลิปบาล์ม OTOP x ประสบการณ์ WebAR
+            </div>
+
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-display font-semibold leading-[1.08] text-gray-900">
+                Tap to Bloom:
+                <span
+                    class="block mt-3 text-4xl md:text-5xl lg:text-6xl font-light bg-gradient-to-r from-pastel-pink via-pink-dark to-pastel-peach bg-clip-text text-transparent">
+                    สัมผัสศรัทธานาแห้วในมิติใหม่
+                </span>
+            </h1>
+
+            <p class="text-lg text-text-soft max-w-lg font-light leading-relaxed">
+                สัมผัสจิตวิญญาณนาแห้วผ่านเทคโนโลยี WebAR ที่ล้ำสมัย นำประเพณีต้นดอกไม้ 400 ปี
+                มาสู่มิติใหม่เพียงปลายนิ้วสัมผัส
+            </p>
+
+            <div class="flex items-center gap-5 pt-4">
+                <button id="exploreARBtn" onclick="openARModal()"
+                    class="group relative px-10 py-4 btn-gradient rounded-full text-gray-800 font-semibold shadow-pink-glow overflow-hidden animate-glow">
+                    <span class="relative z-10 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-xl">view_in_ar</span>
+                        สำรวจโลก AR
+                    </span>
+                    <div
+                        class="absolute inset-0 bg-white opacity-0 group-hover:opacity-40 transition-opacity duration-300">
+                    </div>
+                </button>
+                <button id="watchDemoBtn" onclick="openVideoModal()"
+                    class="w-14 h-14 rounded-full glass-strong shadow-soft hover:shadow-pink-glow flex items-center justify-center text-gray-500 hover:text-pink-dark transition-all duration-300 hover:scale-105">
+                    <span class="material-symbols-outlined text-2xl">play_arrow</span>
+                </button>
+                <span class="text-sm font-medium text-text-soft">ดูวิดีโอ</span>
+            </div>
+        </div>
+
+        <!-- Right Content - 3D Product Visualization -->
+        <div class="relative h-[620px] w-full flex items-center justify-center">
+            <!-- Glow Background -->
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] bg-gradient-to-tr from-pastel-pink/40 via-pastel-peach/30 to-pastel-mint/30 blur-3xl rounded-full animate-pulse-soft">
+            </div>
+
+            <!-- Phone Mockup with AR -->
+            <div class="relative z-20 w-[280px] h-[560px] bg-gray-900 rounded-[3rem] shadow-2xl overflow-hidden border-[5px] border-gray-800 animate-float-medium"
+                style="--rot: 0deg">
+                <div
+                    class="relative w-full h-full bg-gradient-to-b from-gray-100 to-white overflow-hidden rounded-[2.5rem]">
+                    <img alt="AR Interface showing Ton Dok Mai hologram" class="w-full h-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAIy7tFeUh_EroqsSKBXrEts592DxUK0OhJbfppl7xZqRl6S2XId0vP4PVVLTuHUNGIqTdOAjcmwNAaBMcH5oyCK4kXdx0-k5g4AeFe7B-cqa_h6PKRROOGbyvgwtrd4DUapaKQWhziqyVQO7u4d_T56fUg1_xkHHMCwxwP9Bu21F7DToFLLze-r_Qv448L0nenxgOKKpAS4qjcf-RZ1RDKBKyJ3jPzucgjwY1A5HFlw6yxSfpKpRunTJ6_xtPgUu3iuzFn341rN3_" />
+
+                    <!-- AR Badge -->
+                    <div class="absolute top-14 left-0 right-0 flex justify-center">
+                        <div class="glass px-5 py-1.5 rounded-full text-white text-[11px] font-semibold tracking-wide">
+                            🌸 AR View Active
+                        </div>
+                    </div>
+
+                    <!-- AR Flower Hologram -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <img alt="Holographic Ton Dok Mai Flower Tower"
+                            class="w-52 h-52 object-contain mix-blend-screen drop-shadow-[0_0_25px_rgba(255,182,193,0.7)] animate-float-slow"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0U842_x9UPqPdXPdSCHJhogRJ11xDHdF6xHXXi1MSSv_7a42tAmk19UqE8e_i-qC_TPSftn4-VHZMqi5qiUAnko-U3pPqiWrVGl7QzqSRkfE63MgVD-D4gFJ5DOxOUpaGtd9fDYmhwIBPM-esfi3gYj1m844WoFMr5RG6ijYQHyhFYuv8q_yHvqdjN8J1junbrbGWm0P-vXUPtoY3zzZ7YLlkq6CNW-sMyP-rYdBI2o17vFnP_5MGQo3bdovE3Y8O66ir2pPQJyTZ"
+                            style="filter: hue-rotate(320deg) brightness(1.1);" />
+                    </div>
+                </div>
+                <!-- Phone Notch -->
+                <div class="absolute top-3 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-gray-900 rounded-full"></div>
+            </div>
+
+            <!-- Floating Product Boxes -->
+            <div class="absolute left-0 lg:-left-8 top-20 z-30 animate-float-slow" style="--rot: -12deg">
+                <div class="product-box w-52 h-[68px] rounded-2xl flex items-center justify-center border border-white/50 backdrop-blur-sm"
+                    style="--box-color-light: #FFD1DC; --box-color-dark: #FFB6C1;">
+                    <div class="flex items-center gap-4 px-4">
+                        <div
+                            class="w-10 h-10 rounded-full bg-white/40 flex items-center justify-center text-pink-700 text-sm font-display font-bold">
+                            NH</div>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-gray-700 uppercase tracking-widest">Na Haeo</span>
+                            <span class="text-xs text-gray-600 font-light italic">Rose Petal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute left-12 lg:left-8 top-52 z-10 animate-float-medium" style="--rot: -5deg">
+                <div class="product-box w-52 h-[68px] rounded-2xl flex items-center justify-center border border-white/50 backdrop-blur-sm"
+                    style="--box-color-light: #FFE5B4; --box-color-dark: #FFDAB9;">
+                    <div class="flex items-center gap-4 px-4">
+                        <div
+                            class="w-10 h-10 rounded-full bg-white/40 flex items-center justify-center text-amber-700 text-sm font-display font-bold">
+                            NH</div>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-gray-700 uppercase tracking-widest">Na Haeo</span>
+                            <span class="text-xs text-gray-600 font-light italic">พีชน้ำผึ้ง</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute -left-4 lg:-left-12 top-80 z-30 animate-float-fast" style="--rot: 15deg">
+                <div class="product-box w-52 h-[68px] rounded-2xl flex items-center justify-center border border-white/50 backdrop-blur-sm"
+                    style="--box-color-light: #98FF98; --box-color-dark: #7AE47A;">
+                    <div class="flex items-center gap-4 px-4">
+                        <div
+                            class="w-10 h-10 rounded-full bg-white/40 flex items-center justify-center text-green-700 text-sm font-display font-bold">
+                            NH</div>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-gray-700 uppercase tracking-widest">Na Haeo</span>
+                            <span class="text-xs text-gray-600 font-light italic">มิ้นต์สดชื่น</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NFC Journey Section -->
+    <section class="relative z-10 py-24 mosaic-pattern">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <h2 class="font-display text-3xl md:text-4xl font-bold mb-6 text-gray-900">เส้นทาง NFC อันแสนมหัศจรรย์</h2>
+            <p class="text-text-soft font-light max-w-xl mx-auto mb-16">สัมผัสความมหัศจรรย์ใน 3 ขั้นตอนง่ายๆ
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-12 lg:gap-20 relative">
+                <!-- Connection Line -->
+                <div
+                    class="hidden md:block absolute top-20 left-[20%] right-[20%] h-0.5 bg-gradient-to-r from-pastel-pink via-pastel-peach to-pastel-mint opacity-60">
+                </div>
+
+                <!-- Step 1 -->
+                <div class="flex flex-col items-center gap-6 group cursor-pointer">
+                    <div
+                        class="w-36 h-36 rounded-full glass-bubble flex items-center justify-center relative transition-all duration-500 group-hover:scale-110 shadow-pink-glow">
+                        <div class="absolute inset-0 rounded-full bg-gradient-to-br from-pastel-pink/40 to-transparent">
+                        </div>
+                        <span
+                            class="material-symbols-outlined text-5xl text-gray-700 relative z-10">phonelink_ring</span>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-semibold text-lg text-gray-800 mb-2">แตะจุด NFC</h3>
+                        <p class="text-sm text-text-soft font-light max-w-[200px]">นำโทรศัพท์มาใกล้กล่องผลิตภัณฑ์</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex flex-col items-center gap-6 group cursor-pointer">
+                    <div
+                        class="w-36 h-36 rounded-full glass-bubble flex items-center justify-center relative transition-all duration-500 group-hover:scale-110 shadow-peach-glow">
+                        <div
+                            class="absolute inset-0 rounded-full bg-gradient-to-br from-pastel-peach/40 to-transparent">
+                        </div>
+                        <span
+                            class="material-symbols-outlined text-5xl text-gray-700 relative z-10">qr_code_scanner</span>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-semibold text-lg text-gray-800 mb-2">สแกนพื้นที่</h3>
+                        <p class="text-sm text-text-soft font-light max-w-[200px]">หาพื้นผิวเรียบเพื่อวางประสบการณ์ AR
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex flex-col items-center gap-6 group cursor-pointer">
+                    <div
+                        class="w-36 h-36 rounded-full glass-bubble flex items-center justify-center relative transition-all duration-500 group-hover:scale-110 shadow-mint-glow">
+                        <div class="absolute inset-0 rounded-full bg-gradient-to-br from-pastel-mint/40 to-transparent">
+                        </div>
+                        <span
+                            class="material-symbols-outlined text-5xl text-pink-dark relative z-10">local_florist</span>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-semibold text-lg text-gray-800 mb-2">ชมดอกไม้บาน</h3>
+                        <p class="text-sm text-text-soft font-light max-w-[200px]">ชมต้นดอกไม้คลี่บานผ่าน AR
+                            อันเป็นตำนาน</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D Landmark Section -->
+    <section id="ar" class="py-28 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-14">
+                <h2 class="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-4">สำรวจจิตวิญญาณนาแห้วใน 3D
+                </h2>
+                <p class="text-text-soft font-light max-w-2xl mx-auto">โต้ตอบกับมรดกดิจิทัล หมุน ซูม
+                    และค้นพบรายละเอียดสถาปัตยกรรมศักดิ์สิทธิ์ของเลย</p>
+            </div>
+
+            <!-- 3D Viewer Container -->
+            <div id="modelViewerContainer"
+                class="glass-strong rounded-[2.5rem] p-5 md:p-8 shadow-soft relative overflow-hidden">
+                <div
+                    class="relative aspect-[16/9] md:aspect-[21/9] w-full flex items-center justify-center rounded-[2rem] overflow-hidden bg-gradient-to-b from-gray-100 to-gray-200 group cursor-grab active:cursor-grabbing">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-br from-pastel-pink/10 via-transparent to-pastel-mint/10">
+                    </div>
+                    <img id="modelViewerImage" alt="Wat Si Pho Chai 3D Model - Lanchang Style Temple"
+                        class="relative z-10 object-contain h-[85%] w-auto drop-shadow-2xl transition-transform duration-700 group-hover:scale-105"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCE7kfDXau4Ko8Oss4iGSTZhIhoJWRXH6GzJFOOXWfEQUy9Hi-GR67klZiHCqikj-kPCfsn6yjnggE7w8hprFBPuYG1-rjQOlVnhyNR4mUfMXbsBg97Q3G0Umi1GZho81x2ZFEDcix0dbfwghFcb2eiTJYkAlQuXCZMqVty0_oeMf9Un3iBZSpdrrUhvsDwfJh3C8hVpy1cGwzhQ5E06MGpahq7dSJQVdSqIwlA_Ei5SB5A9SKKtMe9Pbe_7JcJkJ-6eP0Y60InDiQ" />
+
+                    <!-- Controls -->
+                    <div class="absolute bottom-6 right-6 z-20 flex gap-3">
+                        <button onclick="toggleFullscreen()"
+                            class="w-12 h-12 rounded-full glass-strong flex items-center justify-center text-gray-600 hover:text-pink-dark hover:bg-white transition-all duration-300">
+                            <span class="material-symbols-outlined text-xl">open_in_full</span>
+                        </button>
+                        <button onclick="openARModal()"
+                            class="w-12 h-12 rounded-full glass-strong flex items-center justify-center text-gray-600 hover:text-pink-dark hover:bg-white transition-all duration-300">
+                            <span class="material-symbols-outlined text-xl">view_in_ar</span>
+                        </button>
+                    </div>
+
+                    <!-- Rotating Badge -->
+                    <div class="absolute top-6 left-6 z-20">
+                        <div
+                            class="glass px-4 py-2 rounded-full text-sm font-medium text-gray-700 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg animate-spin-slow">sync</span>
+                            หมุนอัตโนมัติ
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Selector -->
+                <div class="absolute bottom-12 left-0 right-0 flex justify-center z-30 px-4">
+                    <div class="flex gap-3 p-2.5 rounded-2xl glass-strong shadow-soft overflow-x-auto max-w-full">
+                        <button onclick="switchModel('phu-khao-ngom')" data-model="phu-khao-ngom"
+                            class="model-btn flex items-center gap-3 px-3 py-2 pr-5 rounded-xl hover:bg-white/60 transition-all group shrink-0">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-200 shadow-sm">
+                                <img alt="Phu Khao Ngom Viewpoint" class="w-full h-full object-cover"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPwVSCggPDBPWEYIGLhjM-x0grnLvXDakHNgDYv9MGHV79uM-XN6gg3aL-AcoD_rgXUqGPz2rzQbcw3XuN2H5dJlY1lTmR13yLOEVMtoQKptzf3ZEthYmoVbu3Hm-Fq_QcqHwNrHd4WCQpooLpQSWEmULGt0T0bj8qNmBeMKnmd38hQJgr0KVmNS9mEet83h8vcPKg_ErCFTN51qHsTqxeTef0tLQPZIppMmEcJvxeLcLToopWxb2o9AC_0uETCXX4I1zXcp4c1OhP" />
+                            </div>
+                            <div class="text-left hidden sm:block">
+                                <div class="text-sm font-semibold text-gray-800">ภูเก้าง้อม</div>
+                                <div class="text-xs text-text-soft">จุดชมวิว</div>
+                            </div>
+                        </button>
+
+                        <button onclick="switchModel('wat-si-pho-chai')" data-model="wat-si-pho-chai"
+                            class="model-btn model-btn-active flex items-center gap-3 px-3 py-2 pr-5 rounded-xl shrink-0">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-pastel-pink/30 shadow-sm">
+                                <img alt="Wat Si Pho Chai Temple" class="w-full h-full object-cover"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKJI5SZQaeOTaT6wk-3UO8QpU6QIbJocp_rsVH_0zn4_fSmMTBcND3HQrGk4LdFKD-a5KT_JGJ8QPrJfIdSvalYCR-MeOBK7TPWO1Pj6fpNRPtpRKpjD1JjKEfgwQGO_tC6HRYkKCK8TpFAJ0qeNCaSJgq1OwNPAmscwlh5g4A888PnW3gx2S53EGjPjbf92b5hz1DBO5_9fZUwSOa0-4qHNPA2W9jgQn6cWTSOgHSKaXoT_JcjvniaMDv8dG7roCa6Qi1EAVwBQF3" />
+                            </div>
+                            <div class="text-left hidden sm:block">
+                                <div class="text-sm font-bold text-gray-900">วัดศรีโพธิ์ชัย</div>
+                                <div class="text-xs text-pink-dark">วัดเก่าแก่</div>
+                            </div>
+                        </button>
+
+                        <button onclick="switchModel('ton-dok-mai')" data-model="ton-dok-mai"
+                            class="model-btn flex items-center gap-3 px-3 py-2 pr-5 rounded-xl hover:bg-white/60 transition-all group shrink-0">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-200 shadow-sm">
+                                <img alt="Giant Ton Dok Mai Flower Tower" class="w-full h-full object-cover"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRufQItL33eJ3E-xrzx4n6_6GMAm2mau6lIQ74C_dGokNRqPvHXmQ7f_VMBX37qO39F1GiOZLTu6Cz4ARXvSbmClMmem1KxDqdsvvHZYLQAy_l3XD3Gvk2dgWoHAFJKYRaxi3KZiTTrcovusQCW9g5z1OQvARC2-88PfSxHKPJ9Ms9MPIHll5TsxfWlwuyCPneXanGHmH1TFf-o8olUVbvgnqwiB5HrPTQfv5_XGPz_2WYpWYKjWmALq6mFidNYs6mMbkzKiLCIg_7" />
+                            </div>
+                            <div class="text-left hidden sm:block">
+                                <div class="text-sm font-semibold text-gray-800">ต้นดอกไม้ยักษ์</div>
+                                <div class="text-xs text-text-soft">ประเพณีแห่ต้นดอกไม้</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story & Collection Section -->
+    <section id="story" class="py-24 glass relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col lg:flex-row gap-10">
+
+                <!-- Story Card -->
+                <div class="lg:w-2/5 flex flex-col">
+                    <div
+                        class="bg-white rounded-[2rem] p-4 shadow-soft border border-white h-full flex flex-col group hover:shadow-pink-glow transition-all duration-500">
+                        <div class="relative h-80 lg:h-96 rounded-[1.5rem] overflow-hidden">
+                            <img alt="Local community building the traditional Ton Dok Mai flower tower"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfV-hmUn3a8rdpLVFT2ziXOkJVzik4XhH6NaGtsrVuQqrceKsI1_ok4nFlf3hha426CYJ7w0Xb-bc2tiG_tdLIrpdAsLFftkCh70K_igc8WgXVbTB-33b8Qfo5R2gAndNYD25M-g0uMoyqVV3alFvdP-EUHrsohkcnSYhh8t3dC6aqmx2xgzdZ72T3iTNc1tGcE9_eJLojXJLBFDH4SGuO92jPuxXJ1VL7qQFfkvsJEQv02LH-Qix344cohxADQoRIm_d_-S37fN2I" />
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
+                            </div>
+                            <div class="absolute bottom-6 left-6 text-white">
+                                <span
+                                    class="glass px-4 py-1.5 rounded-full text-[11px] font-bold tracking-wider uppercase mb-4 inline-block">มรดกชุมชน</span>
+                                <h3 class="font-display text-2xl font-bold">โมเสคแห่งศรัทธา</h3>
+                            </div>
+                        </div>
+                        <div class="p-7 flex-grow flex flex-col justify-between">
+                            <p class="text-text-soft text-sm leading-relaxed mb-6 font-light">
+                                ได้รับแรงบันดาลใจจากประเพณีต้นดอกไม้ 400 ปี ที่ชุมชนและศรัทธาผลิบานพร้อมกัน
+                                ทุกการซื้อสนับสนุนช่างฝีมือท้องถิ่นในอำเภอนาแห้วโดยตรง
+                                สืบสานงานฝีมือศักดิ์สิทธิ์นี้สู่คนรุ่นต่อไป
+                            </p>
+                            <a class="inline-flex items-center text-pink-dark font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300"
+                                href="#">
+                                อ่านเรื่องราวเต็ม <span
+                                    class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <div id="collection" class="lg:w-3/5 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Product 1 - Rose Petal -->
+                    <!-- เมื่อมีรูปสินค้าจริง: เปลี่ยน div ด้านล่างเป็น <img src="./assets/images/products/rose-petal.jpg" /> -->
+                    <div
+                        class="bg-white rounded-[2rem] p-5 shadow-soft border border-white hover:shadow-pink-glow hover:-translate-y-2 transition-all duration-400">
+                        <div
+                            class="relative aspect-[2/3] rounded-2xl bg-gradient-to-b from-pastel-pink/50 to-white mb-5 overflow-hidden flex items-center justify-center">
+                            <div
+                                class="w-14 h-36 bg-gradient-to-b from-pastel-pink to-pink-dark rounded-lg shadow-lg flex items-center justify-center transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                                <span
+                                    class="text-[9px] -rotate-90 text-white font-bold tracking-widest whitespace-nowrap">NA
+                                    HAEO</span>
+                            </div>
+                            <div class="absolute top-3 right-3">
+                                <button onclick="toggleFavorite(this, 'rose-petal')" data-product="rose-petal"
+                                    class="favorite-btn w-9 h-9 rounded-full glass flex items-center justify-center text-gray-400 hover:text-pink-dark transition-colors duration-300">
+                                    <span class="material-symbols-outlined text-lg">favorite</span>
+                                </button>
+                            </div>
+                        </div>
+                        <h4 class="font-display font-bold text-gray-800">นาแห้ว โบทานิกส์</h4>
+                        <p class="text-xs text-text-soft mb-4">ลิปบาล์ม กลีบกุหลาบ</p>
+                        <div class="flex flex-col gap-3">
+                            <span class="font-bold text-gray-900 text-lg">฿690</span>
+                            <button onclick="openProduct3D('rose-petal', 'ลิปบาล์ม กลีบกุหลาบ')"
+                                class="w-full py-2.5 rounded-xl bg-pastel-mint text-gray-800 text-xs font-bold flex items-center justify-center gap-2 hover:bg-mint-dark transition-colors duration-300 shadow-sm">
+                                ดู 3D
+                                <span class="material-symbols-outlined text-sm">view_in_ar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 - Peach Honey -->
+                    <!-- เมื่อมีรูปสินค้าจริง: เปลี่ยน div ด้านล่างเป็น <img src="./assets/images/products/peach-honey.jpg" /> -->
+                    <div
+                        class="bg-white rounded-[2rem] p-5 shadow-soft border border-white hover:shadow-peach-glow hover:-translate-y-2 transition-all duration-400">
+                        <div
+                            class="relative aspect-[2/3] rounded-2xl bg-gradient-to-b from-pastel-peach/50 to-white mb-5 overflow-hidden flex items-center justify-center">
+                            <div
+                                class="w-14 h-36 bg-gradient-to-b from-pastel-peach to-peach-dark rounded-lg shadow-lg flex items-center justify-center transform -rotate-2 hover:rotate-0 transition-transform duration-500">
+                                <span
+                                    class="text-[9px] -rotate-90 text-amber-800 font-bold tracking-widest whitespace-nowrap">NA
+                                    HAEO</span>
+                            </div>
+                            <div class="absolute top-3 right-3">
+                                <button onclick="toggleFavorite(this, 'peach-honey')" data-product="peach-honey"
+                                    class="favorite-btn w-9 h-9 rounded-full glass flex items-center justify-center text-gray-400 hover:text-pink-dark transition-colors duration-300">
+                                    <span class="material-symbols-outlined text-lg">favorite</span>
+                                </button>
+                            </div>
+                        </div>
+                        <h4 class="font-display font-bold text-gray-800">นาแห้ว ครีมี่</h4>
+                        <p class="text-xs text-text-soft mb-4">ลิปบาล์ม พีชน้ำผึ้ง</p>
+                        <div class="flex flex-col gap-3">
+                            <span class="font-bold text-gray-900 text-lg">฿870</span>
+                            <button onclick="openProduct3D('peach-honey', 'ลิปบาล์ม พีชน้ำผึ้ง')"
+                                class="w-full py-2.5 rounded-xl bg-pastel-mint text-gray-800 text-xs font-bold flex items-center justify-center gap-2 hover:bg-mint-dark transition-colors duration-300 shadow-sm">
+                                ดู 3D
+                                <span class="material-symbols-outlined text-sm">view_in_ar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 - Fresh Mint -->
+                    <!-- เมื่อมีรูปสินค้าจริง: เปลี่ยน div ด้านล่างเป็น <img src="./assets/images/products/fresh-mint.jpg" /> -->
+                    <div
+                        class="bg-white rounded-[2rem] p-5 shadow-soft border border-white hover:shadow-mint-glow hover:-translate-y-2 transition-all duration-400">
+                        <div
+                            class="relative aspect-[2/3] rounded-2xl bg-gradient-to-b from-pastel-mint/50 to-white mb-5 overflow-hidden flex items-center justify-center">
+                            <div
+                                class="w-14 h-36 bg-gradient-to-b from-pastel-mint to-mint-dark rounded-lg shadow-lg flex items-center justify-center transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                                <span
+                                    class="text-[9px] -rotate-90 text-green-800 font-bold tracking-widest whitespace-nowrap">NA
+                                    HAEO</span>
+                            </div>
+                            <div class="absolute top-3 right-3">
+                                <button onclick="toggleFavorite(this, 'fresh-mint')" data-product="fresh-mint"
+                                    class="favorite-btn w-9 h-9 rounded-full glass flex items-center justify-center text-gray-400 hover:text-pink-dark transition-colors duration-300">
+                                    <span class="material-symbols-outlined text-lg">favorite</span>
+                                </button>
+                            </div>
+                        </div>
+                        <h4 class="font-display font-bold text-gray-800">นาแห้ว มิ้นต์</h4>
+                        <p class="text-xs text-text-soft mb-4">ลิปบาล์ม มิ้นต์สดชื่น</p>
+                        <div class="flex flex-col gap-3">
+                            <span class="font-bold text-gray-900 text-lg">฿570</span>
+                            <button onclick="openProduct3D('fresh-mint', 'ลิปบาล์ม มิ้นต์สดชื่น')"
+                                class="w-full py-2.5 rounded-xl bg-pastel-mint text-gray-800 text-xs font-bold flex items-center justify-center gap-2 hover:bg-mint-dark transition-colors duration-300 shadow-sm">
+                                ดู 3D
+                                <span class="material-symbols-outlined text-sm">view_in_ar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact"
+        class="bg-gradient-to-r from-pastel-pink/30 via-pastel-peach/20 to-pastel-mint/20 border-t border-white/50 pt-16 pb-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start gap-3 mb-3">
+                        <div
+                            class="w-10 h-10 rounded-full bg-gradient-to-br from-pastel-pink to-pink-dark flex items-center justify-center text-white font-bold text-sm shadow-pink-glow">
+                            NH</div>
+                        <h5 class="font-display text-xl font-bold text-gray-900">นาแห้ว โบทานิกส์</h5>
+                    </div>
+                    <p class="text-sm text-text-soft font-light">OTOP ระดับเยี่ยม จากจังหวัดเลย ประเทศไทย</p>
+                    <p class="text-sm text-text-soft font-light mt-1">เชื่อมต่อประเพณีและเทคโนโลยี</p>
+                </div>
+                <div class="flex gap-4">
+                    <a class="w-11 h-11 rounded-full glass flex items-center justify-center text-gray-500 hover:text-pink-dark hover:bg-pastel-pink/50 transition-all duration-300"
+                        href="#">
+                        <span class="material-symbols-outlined text-lg">public</span>
+                    </a>
+                    <a class="w-11 h-11 rounded-full glass flex items-center justify-center text-gray-500 hover:text-pink-dark hover:bg-pastel-pink/50 transition-all duration-300"
+                        href="#">
+                        <span class="material-symbols-outlined text-lg">share</span>
+                    </a>
+                    <a class="w-11 h-11 rounded-full glass flex items-center justify-center text-gray-500 hover:text-pink-dark hover:bg-pastel-pink/50 transition-all duration-300"
+                        href="#">
+                        <span class="material-symbols-outlined text-lg">mail</span>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-white/40 mt-12 pt-8 text-center">
+                <p class="text-xs text-text-soft font-light">© 2026 นาแห้ว โบทานิกส์ สงวนลิขสิทธิ์ • สร้างด้วย 💖
+                    ในประเทศไทย</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AR Experience Modal -->
+    <div id="arModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 modal-overlay modal-enter" onclick="closeARModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="glass-strong rounded-[2rem] w-full max-w-lg shadow-2xl modal-content-enter overflow-hidden">
+                <div class="p-8">
+                    <!-- Header -->
+                    <div class="flex justify-between items-start mb-8">
+                        <div>
+                            <h3 class="font-display text-2xl font-bold text-gray-900 mb-2">🌸 ประสบการณ์ AR</h3>
+                            <p class="text-sm text-text-soft font-light">นำนาแห้วมาสู่พื้นที่ของคุณ</p>
+                        </div>
+                        <button onclick="closeARModal()"
+                            class="w-10 h-10 rounded-full glass flex items-center justify-center text-gray-500 hover:text-pink-dark transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+
+                    <!-- AR Options -->
+                    <div class="space-y-4">
+                        <button onclick="launchCameraAR()"
+                            class="w-full p-5 rounded-2xl bg-gradient-to-r from-pastel-pink/50 to-pastel-peach/50 hover:from-pastel-pink/70 hover:to-pastel-peach/70 transition-all duration-300 flex items-center gap-4 group">
+                            <div
+                                class="w-14 h-14 rounded-xl bg-white/60 flex items-center justify-center text-pink-dark group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-2xl">photo_camera</span>
+                            </div>
+                            <div class="text-left">
+                                <div class="font-semibold text-gray-800">กล้อง AR</div>
+                                <div class="text-xs text-text-soft">ใช้กล้องเพื่อดูวัตถุ AR</div>
+                            </div>
+                            <span class="material-symbols-outlined text-gray-400 ml-auto">arrow_forward</span>
+                        </button>
+
+                        <button onclick="showQRCode()"
+                            class="w-full p-5 rounded-2xl bg-gradient-to-r from-pastel-mint/50 to-pastel-peach/50 hover:from-pastel-mint/70 hover:to-pastel-peach/70 transition-all duration-300 flex items-center gap-4 group">
+                            <div
+                                class="w-14 h-14 rounded-xl bg-white/60 flex items-center justify-center text-mint-dark group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-2xl">qr_code_2</span>
+                            </div>
+                            <div class="text-left">
+                                <div class="font-semibold text-gray-800">สแกน QR Code</div>
+                                <div class="text-xs text-text-soft">เปิด AR บนอุปกรณ์อื่น</div>
+                            </div>
+                            <span class="material-symbols-outlined text-gray-400 ml-auto">arrow_forward</span>
+                        </button>
+
+                        <div class="p-5 rounded-2xl border-2 border-dashed border-pastel-pink/50 bg-pastel-pink/10">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-14 h-14 rounded-xl bg-white/60 flex items-center justify-center text-pink-dark animate-pulse-soft">
+                                    <span class="material-symbols-outlined text-2xl">nfc</span>
+                                </div>
+                                <div class="text-left">
+                                    <div class="font-semibold text-gray-800">แตะ NFC</div>
+                                    <div class="text-xs text-text-soft">นำโทรศัพท์มาแตะที่กล่องสินค้า</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <p class="text-center text-xs text-text-soft mt-6 font-light">
+                        WebAR ทำงานได้ดีที่สุดบน iOS Safari หรือ Android Chrome
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Demo Modal -->
+    <div id="videoModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 modal-overlay modal-enter" onclick="closeVideoModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="glass-strong rounded-[2rem] w-full max-w-3xl shadow-2xl modal-content-enter overflow-hidden">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-display text-xl font-bold text-gray-900">🎬 ดูวิดีโอตัวอย่าง</h3>
+                        <button onclick="closeVideoModal()"
+                            class="w-10 h-10 rounded-full glass flex items-center justify-center text-gray-500 hover:text-pink-dark transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <div class="video-container bg-gray-900 rounded-2xl">
+                        <div id="videoPlaceholder"
+                            class="absolute inset-0 flex flex-col items-center justify-center text-white">
+                            <span class="material-symbols-outlined text-6xl mb-4 text-pastel-pink">play_circle</span>
+                            <p class="text-lg font-display font-semibold">นาแห้ว โบทานิกส์ AR Demo</p>
+                            <p class="text-sm text-gray-400 mt-2">สัมผัสความมหัศจรรย์ของเทคโนโลยี WebAR</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product 3D Modal -->
+    <div id="product3DModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 modal-overlay modal-enter" onclick="closeProduct3DModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="glass-strong rounded-[2rem] w-full max-w-md shadow-2xl modal-content-enter overflow-hidden">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 id="product3DTitle" class="font-display text-xl font-bold text-gray-900">สินค้า 3D View
+                        </h3>
+                        <button onclick="closeProduct3DModal()"
+                            class="w-10 h-10 rounded-full glass flex items-center justify-center text-gray-500 hover:text-pink-dark transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+
+                    <!-- 3D Product View Area -->
+                    <div id="product3DViewer"
+                        class="aspect-square rounded-2xl bg-gradient-to-b from-gray-100 to-gray-200 flex items-center justify-center mb-6 overflow-hidden">
+                        <div class="text-center">
+                            <div
+                                class="w-24 h-48 bg-gradient-to-b from-pastel-pink to-pink-dark rounded-xl shadow-2xl mx-auto mb-4 animate-float-slow flex items-center justify-center">
+                                <span class="text-xs -rotate-90 text-white font-bold tracking-widest">NA HAEO</span>
+                            </div>
+                            <p class="text-sm text-text-soft">ลากเพื่อหมุน • บีบเพื่อซูม</p>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex gap-3">
+                        <button onclick="launchProductAR()"
+                            class="flex-1 py-3 rounded-xl btn-gradient text-gray-800 font-semibold flex items-center justify-center gap-2 shadow-pink-glow">
+                            <span class="material-symbols-outlined">view_in_ar</span>
+                            ดูใน AR
+                        </button>
+                        <button onclick="closeProduct3DModal()"
+                            class="py-3 px-6 rounded-xl glass-strong text-gray-600 font-semibold hover:bg-white transition-colors">
+                            ปิด
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // ===========================
+        // Mobile Menu Functions
+        // ===========================
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn?.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+
+        function closeMobileMenu() {
+            mobileMenu.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // ===========================
+        // Smooth Scroll Navigation
+        // ===========================
+        document.querySelectorAll('.nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+
+        // Shop Now Button
+        document.getElementById('shopNowBtn')?.addEventListener('click', () => {
+            scrollToSection('#collection');
+        });
+
+        function scrollToSection(selector) {
+            const target = document.querySelector(selector);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // ===========================
+        // AR Modal Functions
+        // ===========================
+        const arModal = document.getElementById('arModal');
+
+        function openARModal() {
+            arModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeARModal() {
+            arModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function launchCameraAR() {
+            if (navigator.xr && navigator.xr.isSessionSupported) {
+                // WebXR supported
+                alert('🌸 Launching Camera AR...\n\nWebXR will open your camera to display AR content in your environment.');
+            } else {
+                // Fallback for devices without WebXR
+                alert('🌸 Camera AR\n\nPlease use a device that supports WebXR (iOS Safari or Chrome on Android) for the best AR experience.');
+            }
+            closeARModal();
+        }
+
+        function showQRCode() {
+            alert('📱 QR Code\n\nA QR code would appear here that you can scan with another device to open the AR experience.');
+        }
+
+        // ===========================
+        // Video Modal Functions
+        // ===========================
+        const videoModal = document.getElementById('videoModal');
+
+        function openVideoModal() {
+            videoModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVideoModal() {
+            videoModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // ===========================
+        // 3D Model Selector
+        // ===========================
+        const modelData = {
+            'phu-khao-ngom': {
+                image: 'https://lh3.googleusercontent.com/gps-cs-s/AHVAwepTHFlDPjJOSDVVWbWcyY8NBOfL0WZazLA6lt3Eyis_MOGNXmgYa0uleNGwkDMT5ElUxQF2XFWM4EZ5rcM0BwbOaSStKTuENnQTbTzKWqE3MdDgGK_Ik4oMBwvtfVdQMKtRskwx=s1360-w1360-h1020-rw',
+                alt: 'Phu Khao Ngom Viewpoint 3D Model',
+                title: 'Phu Khao Ngom'
+            },
+            'wat-si-pho-chai': {
+                image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCCE7kfDXau4Ko8Oss4iGSTZhIhoJWRXH6GzJFOOXWfEQUy9Hi-GR67klZiHCqikj-kPCfsn6yjnggE7w8hprFBPuYG1-rjQOlVnhyNR4mUfMXbsBg97Q3G0Umi1GZho81x2ZFEDcix0dbfwghFcb2eiTJYkAlQuXCZMqVty0_oeMf9Un3iBZSpdrrUhvsDwfJh3C8hVpy1cGwzhQ5E06MGpahq7dSJQVdSqIwlA_Ei5SB5A9SKKtMe9Pbe_7JcJkJ-6eP0Y60InDiQ',
+                alt: 'Wat Si Pho Chai 3D Model - Lanchang Style Temple',
+                title: 'Wat Si Pho Chai'
+            },
+            'ton-dok-mai': {
+                image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCRufQItL33eJ3E-xrzx4n6_6GMAm2mau6lIQ74C_dGokNRqPvHXmQ7f_VMBX37qO39F1GiOZLTu6Cz4ARXvSbmClMmem1KxDqdsvvHZYLQAy_l3XD3Gvk2dgWoHAFJKYRaxi3KZiTTrcovusQCW9g5z1OQvARC2-88PfSxHKPJ9Ms9MPIHll5TsxfWlwuyCPneXanGHmH1TFf-o8olUVbvgnqwiB5HrPTQfv5_XGPz_2WYpWYKjWmALq6mFidNYs6mMbkzKiLCIg_7',
+                alt: 'Giant Ton Dok Mai Flower Tower 3D Model',
+                title: 'Giant Ton Dok Mai'
+            }
+        };
+
+        function switchModel(modelId) {
+            const data = modelData[modelId];
+            if (!data) return;
+
+            // Update main image
+            const mainImage = document.getElementById('modelViewerImage');
+            mainImage.src = data.image;
+            mainImage.alt = data.alt;
+
+            // Update button states
+            document.querySelectorAll('.model-btn').forEach(btn => {
+                btn.classList.remove('model-btn-active');
+                if (btn.dataset.model === modelId) {
+                    btn.classList.add('model-btn-active');
+                }
+            });
+        }
+
+        // ===========================
+        // Fullscreen Toggle
+        // ===========================
+        function toggleFullscreen() {
+            const container = document.getElementById('modelViewerContainer');
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        // ===========================
+        // Product Favorites
+        // ===========================
+        let favorites = JSON.parse(localStorage.getItem('nahaeo-favorites') || '[]');
+
+        // Initialize favorites on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            favorites.forEach(productId => {
+                const btn = document.querySelector(`[data-product="${productId}"]`);
+                if (btn) {
+                    btn.classList.add('favorite-active');
+                }
+            });
+        });
+
+        function toggleFavorite(btn, productId) {
+            const index = favorites.indexOf(productId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                btn.classList.remove('favorite-active');
+            } else {
+                favorites.push(productId);
+                btn.classList.add('favorite-active');
+            }
+            localStorage.setItem('nahaeo-favorites', JSON.stringify(favorites));
+        }
+
+        // ===========================
+        // Product 3D Viewer
+        // ===========================
+        const product3DModal = document.getElementById('product3DModal');
+        let currentProductId = null;
+
+        const productColors = {
+            'rose-petal': { from: 'pastel-pink', to: 'pink-dark' },
+            'peach-honey': { from: 'pastel-peach', to: 'peach-dark' },
+            'fresh-mint': { from: 'pastel-mint', to: 'mint-dark' }
+        };
+
+        function openProduct3D(productId, productName) {
+            currentProductId = productId;
+            document.getElementById('product3DTitle').textContent = productName + ' - 3D View';
+
+            // Update product visualization based on ID
+            const colors = productColors[productId] || productColors['rose-petal'];
+            const viewer = document.getElementById('product3DViewer');
+            viewer.innerHTML = `
+                <div class="text-center">
+                    <div class="w-24 h-48 bg-gradient-to-b from-${colors.from} to-${colors.to} rounded-xl shadow-2xl mx-auto mb-4 animate-float-slow flex items-center justify-center">
+                        <span class="text-xs -rotate-90 text-white font-bold tracking-widest">NA HAEO</span>
+                    </div>
+                    <p class="text-sm text-text-soft mt-4">Drag to rotate • Pinch to zoom</p>
+                </div>
+            `;
+
+            product3DModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProduct3DModal() {
+            product3DModal.classList.add('hidden');
+            document.body.style.overflow = '';
+            currentProductId = null;
+        }
+
+        function launchProductAR() {
+            if (currentProductId) {
+                alert(`🌸 Launching AR View for ${currentProductId}...\n\nPosition your camera at a flat surface to place the product in AR.`);
+                closeProduct3DModal();
+            }
+        }
+
+        // ===========================
+        // Keyboard Navigation
+        // ===========================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+                closeARModal();
+                closeVideoModal();
+                closeProduct3DModal();
+            }
+        });
+
+        // ===========================
+        // Social Links Handler (Footer)
+        // ===========================
+        document.querySelectorAll('footer a[href="#"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const icon = link.querySelector('.material-symbols-outlined').textContent;
+                switch (icon) {
+                    case 'public':
+                        alert('🌐 Website\n\nThis would open the official Na Haeo Botanics website.');
+                        break;
+                    case 'share':
+                        if (navigator.share) {
+                            navigator.share({
+                                title: 'Na Haeo Botanics',
+                                text: 'Experience Thai OTOP heritage through WebAR technology!',
+                                url: window.location.href
+                            });
+                        } else {
+                            alert('📤 Share\n\nShare Na Haeo Botanics with your friends!');
+                        }
+                        break;
+                    case 'mail':
+                        window.location.href = 'mailto:contact@nahaeobotanics.com?subject=Inquiry from Website';
+                        break;
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
