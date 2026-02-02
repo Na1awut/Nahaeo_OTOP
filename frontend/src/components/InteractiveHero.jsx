@@ -61,6 +61,7 @@ const hotspots = [
 export default function InteractiveHero() {
     const [activeHotspot, setActiveHotspot] = useState(null);
     const [hoveredHotspot, setHoveredHotspot] = useState(null);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     const openModal = (hotspot) => {
         setActiveHotspot(hotspot);
@@ -68,6 +69,20 @@ export default function InteractiveHero() {
 
     const closeModal = () => {
         setActiveHotspot(null);
+    };
+
+    const toggleFullscreen = async () => {
+        try {
+            if (!document.fullscreenElement) {
+                await document.documentElement.requestFullscreen();
+                setIsFullscreen(true);
+            } else {
+                await document.exitFullscreen();
+                setIsFullscreen(false);
+            }
+        } catch (err) {
+            console.error('Fullscreen error:', err);
+        }
     };
 
     return (
@@ -124,6 +139,16 @@ export default function InteractiveHero() {
                         Na Haeo <span className="text-[#FFD1DC]">Glow</span>
                     </span>
                 </div>
+
+                {/* Fullscreen Button */}
+                <button
+                    onClick={toggleFullscreen}
+                    className="absolute top-4 right-4 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors z-10 shadow-lg"
+                >
+                    <span className="material-symbols-outlined text-xl sm:text-2xl">
+                        {isFullscreen ? 'fullscreen_exit' : 'fullscreen'}
+                    </span>
+                </button>
             </div>
 
             {/* Modal */}
