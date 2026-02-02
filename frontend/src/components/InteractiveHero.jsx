@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 // Hotspot data for clickable areas
@@ -19,13 +19,13 @@ const hotspots = [
     {
         id: 'procession',
         name: 'ประเพณีต้นดอกไม้',
-        icon: '🎊',
-        position: { top: '45%', left: '15%' },
-        size: { width: '35%', height: '35%' },
-        color: 'from-[#FFE5B4] to-[#FFDAB9]',
+        icon: '🌸',
+        position: { top: '45%', left: '20%' },
+        size: { width: '30%', height: '35%' },
+        color: 'from-[#98FF98] to-[#90EE90]',
         content: {
             title: 'ประเพณีต้นดอกไม้',
-            description: 'ประเพณีโบราณกว่า 400 ปี ที่ชาวนาแห้วร่วมกันสร้างต้นดอกไม้ขนาดใหญ่เพื่อถวายแด่พระธาตุ เป็นการแสดงความศรัทธาและความสามัคคีของชุมชน',
+            description: 'งานประเพณีที่สืบทอดมากว่า 400 ปี จัดขึ้นในช่วงเดือน 4 ของทุกปี ชาวบ้านจะร่วมแรงร่วมใจประดิษฐ์ต้นดอกไม้จากดอกไม้ธรรมชาติ แห่รอบหมู่บ้านเพื่อถวายเป็นพุทธบูชา',
             image: null
         }
     },
@@ -33,12 +33,12 @@ const hotspots = [
         id: 'macadamia',
         name: 'แมคคาเดเมีย',
         icon: '🥜',
-        position: { top: '5%', left: '2%' },
-        size: { width: '15%', height: '25%' },
-        color: 'from-[#98FF98] to-[#7AE47A]',
+        position: { top: '8%', left: '3%' },
+        size: { width: '18%', height: '25%' },
+        color: 'from-[#FFE5B4] to-[#FFDAB9]',
         content: {
             title: 'แมคคาเดเมียนาแห้ว',
-            description: 'วัตถุดิบหลักในลิปบาล์มของเรา ปลูกโดยเกษตรกรท้องถิ่นในอำเภอนาแห้ว น้ำมันแมคคาเดเมียอุดมด้วยกรดไขมันพาลมิโทเอลิก ซึมซาบเข้าผิวได้ดีเยี่ยม ช่วยกักเก็บความชุ่มชื้นได้ถึง 95%',
+            description: 'ด้วยสภาพอากาศเย็นตลอดปีและความสูงจากระดับน้ำทะเล ทำให้นาแห้วเป็นพื้นที่ปลูกแมคคาเดเมียที่มีคุณภาพสูง น้ำมันจากแมคคาเดเมียเป็นส่วนผสมหลักในผลิตภัณฑ์ของเรา',
             image: null
         }
     },
@@ -46,14 +46,14 @@ const hotspots = [
         id: 'product',
         name: 'ผลิตภัณฑ์',
         icon: '💄',
-        position: { top: '25%', left: '60%' },
-        size: { width: '25%', height: '35%' },
-        color: 'from-[#E6E6FA] to-[#DDA0DD]',
+        position: { top: '25%', left: '75%' },
+        size: { width: '20%', height: '30%' },
+        color: 'from-[#FFD1DC] to-[#FFB6C1]',
         content: {
-            title: 'Na Haeo Glow Lip Balm',
-            description: 'ลิปบาล์มออร์แกนิกจากน้ำมันแมคคาเดเมียและไขผึ้งแท้ สูตรดั้งเดิมจากงานวิจัย กักเก็บความชุ่มชื้นได้ถึง 95% ปลอดสารเคมี 100%',
+            title: 'ลิปบาล์มนาแห้ว โบทานิกส์',
+            description: 'ลิปบาล์มออร์แกนิกจากน้ำมันแมคคาเดเมียและไขผึ้งแท้ สูตรต้นตำรับจากงานวิจัย กักเก็บความชุ่มชื้นได้ถึง 95% ปลอดสารเคมี 100%',
             image: '/images/product-box.png',
-            link: '/#collection'
+            link: '#collection'
         }
     }
 ];
@@ -61,25 +61,6 @@ const hotspots = [
 export default function InteractiveHero() {
     const [activeHotspot, setActiveHotspot] = useState(null);
     const [hoveredHotspot, setHoveredHotspot] = useState(null);
-    const [scrollProgress, setScrollProgress] = useState(0);
-    const [isVisible, setIsVisible] = useState(true);
-    const heroRef = useRef(null);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (!heroRef.current) return;
-
-            const scrollY = window.scrollY;
-            const heroHeight = window.innerHeight;
-            const progress = Math.min(scrollY / (heroHeight * 0.5), 1);
-
-            setScrollProgress(progress);
-            setIsVisible(progress < 1);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     const openModal = (hotspot) => {
         setActiveHotspot(hotspot);
@@ -89,22 +70,10 @@ export default function InteractiveHero() {
         setActiveHotspot(null);
     };
 
-    // Calculate transform based on scroll
-    const heroStyle = {
-        transform: `perspective(1000px) rotateX(${scrollProgress * 90}deg)`,
-        transformOrigin: 'top center',
-        opacity: 1 - scrollProgress,
-        pointerEvents: isVisible ? 'auto' : 'none',
-    };
-
     return (
         <>
-            {/* Fullscreen Fixed Hero Overlay */}
-            <div
-                ref={heroRef}
-                className="fixed inset-0 z-[90]"
-                style={heroStyle}
-            >
+            {/* Fullscreen Hero */}
+            <div className="fixed inset-0">
                 {/* Fullscreen Image with Hotspots */}
                 <div className="absolute inset-0">
                     <img
@@ -134,7 +103,7 @@ export default function InteractiveHero() {
                             {/* Label - positioned at center */}
                             <div className={`
                                 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                                px-3 py-1.5 rounded-full text-xs font-semibold text-gray-800 whitespace-nowrap
+                                px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold text-gray-800 whitespace-nowrap
                                 bg-gradient-to-r ${hotspot.color} shadow-lg
                                 transform transition-all duration-300 cursor-pointer
                                 ${hoveredHotspot === hotspot.id ? 'scale-110 opacity-100' : 'scale-100 opacity-90'}
@@ -146,17 +115,16 @@ export default function InteractiveHero() {
                     ))}
                 </div>
 
-                {/* Scroll Indicator */}
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce z-10">
-                    <span className="text-xs text-white bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">เลื่อนลง</span>
-                    <div className="w-6 h-10 rounded-full border-2 border-white/70 flex items-start justify-center p-1 bg-black/20 backdrop-blur-sm">
-                        <div className="w-1.5 h-3 rounded-full bg-white animate-scroll-dot" />
+                {/* Logo */}
+                <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[#FFD1DC] to-[#FFB6C1] flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                        NH
                     </div>
+                    <span className="text-base sm:text-lg font-display font-medium text-white drop-shadow-lg">
+                        Na Haeo <span className="text-[#FFD1DC]">Glow</span>
+                    </span>
                 </div>
             </div>
-
-            {/* Spacer for scroll - reduced to prevent blank gap */}
-            <div className="h-[70vh]" />
 
             {/* Modal */}
             {activeHotspot && (
@@ -166,7 +134,7 @@ export default function InteractiveHero() {
                         onClick={closeModal}
                     />
                     <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-4">
-                        <div className="glass-strong rounded-2xl sm:rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
+                        <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
                             {/* Header */}
                             <div className={`bg-gradient-to-r ${activeHotspot.color} p-3 sm:p-6 sticky top-0`}>
                                 <div className="flex items-center justify-between">
@@ -213,7 +181,7 @@ export default function InteractiveHero() {
                                 ) : (
                                     <button
                                         onClick={closeModal}
-                                        className="w-full py-2 sm:py-3 rounded-xl glass-strong text-gray-600 font-semibold hover:bg-white transition-colors text-sm sm:text-base"
+                                        className="w-full py-2 sm:py-3 rounded-xl bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition-colors text-sm sm:text-base"
                                     >
                                         ปิด
                                     </button>
@@ -232,13 +200,6 @@ export default function InteractiveHero() {
                 }
                 .animate-scale-in {
                     animation: scale-in 0.3s ease-out forwards;
-                }
-                @keyframes scroll-dot {
-                    0%, 100% { transform: translateY(0); opacity: 1; }
-                    50% { transform: translateY(12px); opacity: 0.3; }
-                }
-                .animate-scroll-dot {
-                    animation: scroll-dot 1.5s ease-in-out infinite;
                 }
             `}</style>
         </>
