@@ -5,6 +5,7 @@ import InteractiveHero from '../components/InteractiveHero';
 import LandmarkSection from '../components/LandmarkSection';
 import ProductsSection from '../components/ProductsSection';
 import Footer from '../components/Footer';
+import RotateDeviceOverlay from '../components/RotateDeviceOverlay';
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -74,6 +75,7 @@ export default function HomePage() {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-[#FFE5B4]/10 to-transparent rounded-full blur-3xl"></div>
             </div>
 
+            <RotateDeviceOverlay />
             <Navbar />
             <InteractiveHero />
             <LandmarkSection />
