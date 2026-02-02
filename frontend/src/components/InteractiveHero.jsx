@@ -155,8 +155,8 @@ export default function InteractiveHero() {
                 </div>
             </div>
 
-            {/* Spacer for scroll */}
-            <div className="h-screen" />
+            {/* Spacer for scroll - reduced to prevent blank gap */}
+            <div className="h-[70vh]" />
 
             {/* Modal */}
             {activeHotspot && (
@@ -172,7 +172,7 @@ export default function InteractiveHero() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <span className="text-4xl">{activeHotspot.icon}</span>
-                                        <h2 className="font-display text-xl md:text-2xl font-bold text-white drop-shadow">
+                                        <h2 className="font-display text-xl md:text-2xl font-bold text-gray-900">
                                             {activeHotspot.content.title}
                                         </h2>
                                     </div>
@@ -197,7 +197,7 @@ export default function InteractiveHero() {
                                     </div>
                                 )}
 
-                                <p className="text-[#6B6B6B] leading-relaxed mb-6">
+                                <p className="text-black leading-relaxed mb-6">
                                     {activeHotspot.content.description}
                                 </p>
 
