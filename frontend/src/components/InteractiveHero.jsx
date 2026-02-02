@@ -165,46 +165,46 @@ export default function InteractiveHero() {
                         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                         onClick={closeModal}
                     />
-                    <div className="absolute inset-0 flex items-center justify-center p-4">
-                        <div className="glass-strong rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-scale-in">
+                    <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-4">
+                        <div className="glass-strong rounded-2xl sm:rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
                             {/* Header */}
-                            <div className={`bg-gradient-to-r ${activeHotspot.color} p-6`}>
+                            <div className={`bg-gradient-to-r ${activeHotspot.color} p-3 sm:p-6 sticky top-0`}>
                                 <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-4xl">{activeHotspot.icon}</span>
-                                        <h2 className="font-display text-xl md:text-2xl font-bold text-gray-900">
+                                    <div className="flex items-center gap-2 sm:gap-3">
+                                        <span className="text-2xl sm:text-4xl">{activeHotspot.icon}</span>
+                                        <h2 className="font-display text-base sm:text-xl md:text-2xl font-bold text-gray-900">
                                             {activeHotspot.content.title}
                                         </h2>
                                     </div>
                                     <button
                                         onClick={closeModal}
-                                        className="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center text-white hover:bg-white/50 transition-colors"
+                                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/30 flex items-center justify-center text-gray-800 hover:bg-white/50 transition-colors"
                                     >
-                                        <span className="material-symbols-outlined">close</span>
+                                        <span className="material-symbols-outlined text-xl sm:text-2xl">close</span>
                                     </button>
                                 </div>
                             </div>
 
                             {/* Content */}
-                            <div className="p-6">
+                            <div className="p-3 sm:p-6">
                                 {activeHotspot.content.image && (
-                                    <div className="mb-4 rounded-2xl overflow-hidden bg-gray-100">
+                                    <div className="mb-3 sm:mb-4 rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100">
                                         <img
                                             src={activeHotspot.content.image}
                                             alt={activeHotspot.content.title}
-                                            className="w-full h-48 object-contain"
+                                            className="w-full h-32 sm:h-48 object-contain"
                                         />
                                     </div>
                                 )}
 
-                                <p className="text-black leading-relaxed mb-6">
+                                <p className="text-black text-sm sm:text-base leading-relaxed mb-4 sm:mb-6">
                                     {activeHotspot.content.description}
                                 </p>
 
                                 {activeHotspot.content.link ? (
                                     <Link
                                         to={activeHotspot.content.link}
-                                        className={`w-full py-3 rounded-xl bg-gradient-to-r ${activeHotspot.color} text-white font-semibold flex items-center justify-center gap-2 shadow-lg hover:opacity-90 transition-opacity`}
+                                        className={`w-full py-2 sm:py-3 rounded-xl bg-gradient-to-r ${activeHotspot.color} text-gray-800 font-semibold flex items-center justify-center gap-2 shadow-lg hover:opacity-90 transition-opacity text-sm sm:text-base`}
                                         onClick={closeModal}
                                     >
                                         <span className="material-symbols-outlined">shopping_bag</span>
@@ -213,7 +213,7 @@ export default function InteractiveHero() {
                                 ) : (
                                     <button
                                         onClick={closeModal}
-                                        className="w-full py-3 rounded-xl glass-strong text-gray-600 font-semibold hover:bg-white transition-colors"
+                                        className="w-full py-2 sm:py-3 rounded-xl glass-strong text-gray-600 font-semibold hover:bg-white transition-colors text-sm sm:text-base"
                                     >
                                         ปิด
                                     </button>
