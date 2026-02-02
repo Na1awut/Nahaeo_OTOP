@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import HeroSection from '../components/HeroSection';
+import InteractiveHero from '../components/InteractiveHero';
 import LandmarkSection from '../components/LandmarkSection';
 import ProductsSection from '../components/ProductsSection';
 import Footer from '../components/Footer';
@@ -75,7 +75,7 @@ export default function HomePage() {
             </div>
 
             <Navbar />
-            <HeroSection />
+            <InteractiveHero />
             <LandmarkSection />
             <ProductsSection />
             <Footer />
