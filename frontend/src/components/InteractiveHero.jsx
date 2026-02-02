@@ -143,7 +143,7 @@ export default function InteractiveHero() {
                 {/* Fullscreen Button */}
                 <button
                     onClick={toggleFullscreen}
-                    className="absolute top-4 right-4 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors z-10 shadow-lg"
+                    className="absolute top-4 right-4 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[#FFD1DC] to-[#FFB6C1] flex items-center justify-center text-gray-800 hover:scale-110 transition-transform z-10 shadow-lg"
                 >
                     <span className="material-symbols-outlined text-xl sm:text-2xl">
                         {isFullscreen ? 'fullscreen_exit' : 'fullscreen'}
