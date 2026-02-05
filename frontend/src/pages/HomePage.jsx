@@ -1,19 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import InteractiveHero from '../components/InteractiveHero';
-import RotateDeviceOverlay from '../components/RotateDeviceOverlay';
+import StoryPage from './StoryPage';
 
 export default function HomePage() {
     const navigate = useNavigate();
-    const [isVerified, setIsVerified] = useState(null); // null = checking
+    const [isVerified, setIsVerified] = useState(null);
 
     useEffect(() => {
-        // Check if user has been verified
         const verified = localStorage.getItem('nahaeo_verified');
         const verifiedTime = localStorage.getItem('nahaeo_verified_time');
 
         if (verified === 'true' && verifiedTime) {
-            // Check if verification is within 24 hours
             const timeDiff = Date.now() - parseInt(verifiedTime);
             const twentyFourHours = 24 * 60 * 60 * 1000;
 
@@ -23,12 +20,10 @@ export default function HomePage() {
             }
         }
 
-        // Not verified or expired, redirect to verify page
         setIsVerified(false);
         navigate('/verify', { replace: true });
     }, [navigate]);
 
-    // Show loading while checking
     if (isVerified === null || isVerified === false) {
         return (
             <div className="fixed inset-0 bg-gradient-to-br from-[#FFF9F5] to-[#F5F0E8] flex items-center justify-center">
@@ -42,10 +37,5 @@ export default function HomePage() {
         );
     }
 
-    return (
-        <>
-            <RotateDeviceOverlay />
-            <InteractiveHero />
-        </>
-    );
+    return <StoryPage />;
 }
