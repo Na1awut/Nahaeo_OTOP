@@ -527,20 +527,23 @@ export default function StoryPage() {
                     animation: scaleIn 0.3s ease-out;
                 }
 
-                /* Water Ripple Effect - smooth like real water */
+                /* Water Ripple Effect - smaller but more intense */
                 @keyframes ripple {
                     0% {
-                        transform: scale(0.2);
-                        opacity: 0.8;
+                        transform: scale(0.3);
+                        opacity: 1;
                         border-width: 4px;
+                        filter: blur(0px);
                     }
                     50% {
-                        opacity: 0.5;
+                        opacity: 0.7;
+                        filter: blur(1px);
                     }
                     100% {
-                        transform: scale(3);
+                        transform: scale(2);
                         opacity: 0;
-                        border-width: 1px;
+                        border-width: 2px;
+                        filter: blur(2px);
                     }
                 }
 
