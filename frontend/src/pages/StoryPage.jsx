@@ -6,6 +6,32 @@ const TOTAL_SCENES = 19;
 // Get image path (WebP version)
 const getImagePath = (sceneNum) => `/images/scene/scene/${sceneNum}.webp`;
 
+// Hotspot data for each scene
+const sceneHotspots = {
+    2: [
+        {
+            id: 'phu-kao-ngom',
+            position: { top: '35%', left: '48%' }, // ตำแหน่งแผนที่ใน scene 2
+            size: { width: '18%', height: '35%' },
+            content: {
+                title: 'ภูเก้าง้อม',
+                subtitle: '2113, Tambon Namala, Amphoe Na Haeo, Chang Wat Loei 42170',
+                description: `ภูเก้าง้อม ตั้งอยู่ริมทางหลวงหมายเลข 2113 (นาแห้ว-ด่านซ้าย) ต.บลนามาลา อำเภอนาแห้ว
+
+ชาวบ้านในพื้นที่เรียกว่า โค้งที่ 9 เพราะหากมองจากมุมสูงหรือภาพถ่ายทางอากาศจะเห็นถนนในช่วงนี้มีความคดโค้งคล้ายเลขเก้าไทย ๙
+
+สองข้างทางเป็นภูเขาสลับซับซ้อน ในช่วงฤดูฝนจนถึงปลายฝนต้นหนาวตั้งแต่เดือนตุลาคม-มกราคม มีโอกาสพบเจอทะเลหมอก
+
+มีจุดพักรถข้างทางสำหรับจอดชมทิวทัศน์ ทำให้ภูเก้าง้อมกลายเป็นแหล่งท่องเที่ยวและจุดชมทะเลหมอกที่น่าสนใจอีกแห่งของจังหวัดเลย`,
+                icon: '🏔️',
+                // Google Maps data
+                mapUrl: 'https://www.google.com/maps?q=17.363754,101.051384',
+                coordinates: { lat: 17.363754, lng: 101.051384 }
+            }
+        }
+    ]
+};
+
 export default function StoryPage() {
     const [currentScene, setCurrentScene] = useState(1);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -16,9 +42,13 @@ export default function StoryPage() {
     const [loadedImages, setLoadedImages] = useState(new Set([1]));
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [showControls, setShowControls] = useState(true);
+    const [activeHotspot, setActiveHotspot] = useState(null);
     const touchStartX = useRef(0);
     const hideControlsTimer = useRef(null);
     const containerRef = useRef(null);
+
+    // Get hotspots for current scene
+    const currentHotspots = sceneHotspots[currentScene] || [];
 
     // Auto-hide controls after 3 seconds
     const resetHideTimer = useCallback(() => {
@@ -27,11 +57,11 @@ export default function StoryPage() {
             clearTimeout(hideControlsTimer.current);
         }
         hideControlsTimer.current = setTimeout(() => {
-            if (!showTutorial) {
+            if (!showTutorial && !activeHotspot) {
                 setShowControls(false);
             }
         }, 3000);
-    }, [showTutorial]);
+    }, [showTutorial, activeHotspot]);
 
     // Show controls on any interaction
     const handleInteraction = useCallback(() => {
@@ -61,16 +91,12 @@ export default function StoryPage() {
     const toggleFullscreen = async () => {
         try {
             if (!document.fullscreenElement) {
-                // Try to lock to landscape on mobile
                 if (containerRef.current) {
                     await containerRef.current.requestFullscreen();
-                    // Try to lock orientation (may not work on all devices)
                     if (screen.orientation && screen.orientation.lock) {
                         try {
                             await screen.orientation.lock('landscape');
-                        } catch (e) {
-                            // Orientation lock not supported
-                        }
+                        } catch (e) { }
                     }
                 }
             } else {
@@ -119,7 +145,7 @@ export default function StoryPage() {
     };
 
     const goToNextScene = () => {
-        if (currentScene < TOTAL_SCENES && !isAnimating) {
+        if (currentScene < TOTAL_SCENES && !isAnimating && !activeHotspot) {
             setSlideDirection('slide-left');
             setIsAnimating(true);
             dismissTutorial();
@@ -133,7 +159,7 @@ export default function StoryPage() {
     };
 
     const goToPrevScene = () => {
-        if (currentScene > 1 && !isAnimating) {
+        if (currentScene > 1 && !isAnimating && !activeHotspot) {
             setSlideDirection('slide-right');
             setIsAnimating(true);
             dismissTutorial();
@@ -146,8 +172,20 @@ export default function StoryPage() {
         }
     };
 
+    // Hotspot click handler
+    const handleHotspotClick = (e, hotspot) => {
+        e.stopPropagation();
+        setActiveHotspot(hotspot);
+    };
+
+    const closeHotspotModal = () => {
+        setActiveHotspot(null);
+        resetHideTimer();
+    };
+
     // Touch handlers for swipe with real-time feedback
     const handleTouchStart = (e) => {
+        if (activeHotspot) return;
         touchStartX.current = e.touches[0].clientX;
         setIsSwiping(true);
         dismissTutorial();
@@ -155,17 +193,17 @@ export default function StoryPage() {
     };
 
     const handleTouchMove = (e) => {
-        if (!isSwiping) return;
+        if (!isSwiping || activeHotspot) return;
         const currentX = e.touches[0].clientX;
         const diff = currentX - touchStartX.current;
 
-        // Limit swipe offset
         const maxOffset = 100;
         const limitedOffset = Math.max(-maxOffset, Math.min(maxOffset, diff));
         setSwipeOffset(limitedOffset);
     };
 
     const handleTouchEnd = () => {
+        if (activeHotspot) return;
         const threshold = 50;
 
         if (swipeOffset < -threshold) {
@@ -199,7 +237,100 @@ export default function StoryPage() {
                     className="w-full h-full object-contain"
                     loading="lazy"
                 />
+
+                {/* Hotspots for current scene */}
+                {currentHotspots.map((hotspot) => (
+                    <button
+                        key={hotspot.id}
+                        onClick={(e) => handleHotspotClick(e, hotspot)}
+                        className="absolute cursor-pointer group z-30"
+                        style={{
+                            top: hotspot.position.top,
+                            left: hotspot.position.left,
+                            width: hotspot.size.width,
+                            height: hotspot.size.height,
+                        }}
+                    >
+                        {/* Pulse effect */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="absolute w-8 h-8 rounded-full bg-white/30 animate-ping"></div>
+                            <div className="relative w-6 h-6 rounded-full bg-white/50 backdrop-blur-sm flex items-center justify-center shadow-lg group-hover:scale-125 transition-transform">
+                                <span className="text-xs">📍</span>
+                            </div>
+                        </div>
+                    </button>
+                ))}
             </div>
+
+            {/* Hotspot Modal */}
+            {activeHotspot && (
+                <div
+                    className="absolute inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                    onClick={closeHotspotModal}
+                >
+                    <div
+                        className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl animate-scale-in"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Header */}
+                        <div className="sticky top-0 bg-gradient-to-r from-[#FFD1DC] to-[#FFB6C1] p-4 rounded-t-2xl">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-2xl">{activeHotspot.content.icon}</span>
+                                    <div>
+                                        <h2 className="text-lg font-bold text-gray-800">{activeHotspot.content.title}</h2>
+                                        {activeHotspot.content.subtitle && (
+                                            <p className="text-xs text-gray-600">{activeHotspot.content.subtitle}</p>
+                                        )}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={closeHotspotModal}
+                                    className="w-8 h-8 rounded-full bg-white/30 flex items-center justify-center text-gray-800 hover:bg-white/50 transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-lg">close</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-4 space-y-4">
+                            <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
+                                {activeHotspot.content.description}
+                            </p>
+
+                            {/* Minimap */}
+                            {activeHotspot.content.coordinates && (
+                                <div className="space-y-2">
+                                    <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                                        <iframe
+                                            src={`https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d5000!2d${activeHotspot.content.coordinates.lng}!3d${activeHotspot.content.coordinates.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sth!2sth!4v1`}
+                                            width="100%"
+                                            height="150"
+                                            style={{ border: 0 }}
+                                            allowFullScreen=""
+                                            loading="lazy"
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                            title="Location Map"
+                                        ></iframe>
+                                    </div>
+
+                                    {/* Open in Google Maps button */}
+                                    <a
+                                        href={activeHotspot.content.mapUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-[#4285F4] to-[#34A853] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">map</span>
+                                        เปิดใน Google Maps
+                                    </a>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Loading indicator */}
             {!loadedImages.has(currentScene) && (
@@ -373,6 +504,11 @@ export default function StoryPage() {
                     50% { transform: translateX(15px); opacity: 1; }
                 }
 
+                @keyframes scaleIn {
+                    from { opacity: 0; transform: scale(0.9); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+
                 .animate-fade-in {
                     animation: fadeIn 0.3s ease-out;
                 }
@@ -383,6 +519,10 @@ export default function StoryPage() {
 
                 .animate-swipe-right {
                     animation: swipeRightAnim 1.5s ease-in-out infinite;
+                }
+
+                .animate-scale-in {
+                    animation: scaleIn 0.3s ease-out;
                 }
             `}</style>
         </div>
