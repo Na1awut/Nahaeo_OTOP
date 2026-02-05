@@ -251,12 +251,15 @@ export default function StoryPage() {
                             height: hotspot.size.height,
                         }}
                     >
-                        {/* Pulse effect */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="absolute w-8 h-8 rounded-full bg-white/30 animate-ping"></div>
-                            <div className="relative w-6 h-6 rounded-full bg-white/50 backdrop-blur-sm flex items-center justify-center shadow-lg group-hover:scale-125 transition-transform">
-                                <span className="text-xs">📍</span>
-                            </div>
+                        {/* Water Ripple Effect - smooth like real water */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            {/* Ripple rings with backdrop blur */}
+                            <div className="absolute w-24 h-24 rounded-full border-4 border-white/50 backdrop-blur-[2px] animate-ripple-1"></div>
+                            <div className="absolute w-24 h-24 rounded-full border-4 border-white/40 backdrop-blur-[2px] animate-ripple-2"></div>
+                            <div className="absolute w-24 h-24 rounded-full border-4 border-white/30 backdrop-blur-[1px] animate-ripple-3"></div>
+                            <div className="absolute w-24 h-24 rounded-full border-4 border-white/20 animate-ripple-4"></div>
+                            {/* Center glow dot */}
+                            <div className="relative w-5 h-5 rounded-full bg-white/80 shadow-[0_0_15px_5px_rgba(255,255,255,0.4)] pointer-events-auto animate-pulse"></div>
                         </div>
                     </button>
                 ))}
@@ -523,6 +526,40 @@ export default function StoryPage() {
 
                 .animate-scale-in {
                     animation: scaleIn 0.3s ease-out;
+                }
+
+                /* Water Ripple Effect - smooth like real water */
+                @keyframes ripple {
+                    0% {
+                        transform: scale(0.2);
+                        opacity: 0.8;
+                        border-width: 4px;
+                    }
+                    50% {
+                        opacity: 0.4;
+                        border-width: 3px;
+                    }
+                    100% {
+                        transform: scale(3);
+                        opacity: 0;
+                        border-width: 1px;
+                    }
+                }
+
+                .animate-ripple-1 {
+                    animation: ripple 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+                }
+
+                .animate-ripple-2 {
+                    animation: ripple 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 0.6s;
+                }
+
+                .animate-ripple-3 {
+                    animation: ripple 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 1.2s;
+                }
+
+                .animate-ripple-4 {
+                    animation: ripple 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 1.8s;
                 }
             `}</style>
         </div>
