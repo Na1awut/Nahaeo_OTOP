@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 // Total number of scenes
 const TOTAL_SCENES = 19;
@@ -14,7 +14,76 @@ export default function StoryPage() {
     const [isSwiping, setIsSwiping] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
     const [loadedImages, setLoadedImages] = useState(new Set([1]));
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [showControls, setShowControls] = useState(true);
     const touchStartX = useRef(0);
+    const hideControlsTimer = useRef(null);
+    const containerRef = useRef(null);
+
+    // Auto-hide controls after 3 seconds
+    const resetHideTimer = useCallback(() => {
+        setShowControls(true);
+        if (hideControlsTimer.current) {
+            clearTimeout(hideControlsTimer.current);
+        }
+        hideControlsTimer.current = setTimeout(() => {
+            if (!showTutorial) {
+                setShowControls(false);
+            }
+        }, 3000);
+    }, [showTutorial]);
+
+    // Show controls on any interaction
+    const handleInteraction = useCallback(() => {
+        resetHideTimer();
+    }, [resetHideTimer]);
+
+    // Start hide timer on mount
+    useEffect(() => {
+        resetHideTimer();
+        return () => {
+            if (hideControlsTimer.current) {
+                clearTimeout(hideControlsTimer.current);
+            }
+        };
+    }, [resetHideTimer]);
+
+    // Fullscreen change listener
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    }, []);
+
+    // Toggle fullscreen
+    const toggleFullscreen = async () => {
+        try {
+            if (!document.fullscreenElement) {
+                // Try to lock to landscape on mobile
+                if (containerRef.current) {
+                    await containerRef.current.requestFullscreen();
+                    // Try to lock orientation (may not work on all devices)
+                    if (screen.orientation && screen.orientation.lock) {
+                        try {
+                            await screen.orientation.lock('landscape');
+                        } catch (e) {
+                            // Orientation lock not supported
+                        }
+                    }
+                }
+            } else {
+                await document.exitFullscreen();
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+            }
+        } catch (err) {
+            console.error('Fullscreen error:', err);
+        }
+        resetHideTimer();
+    };
 
     // Preload adjacent images
     useEffect(() => {
@@ -46,6 +115,7 @@ export default function StoryPage() {
 
     const dismissTutorial = () => {
         setShowTutorial(false);
+        resetHideTimer();
     };
 
     const goToNextScene = () => {
@@ -53,6 +123,7 @@ export default function StoryPage() {
             setSlideDirection('slide-left');
             setIsAnimating(true);
             dismissTutorial();
+            resetHideTimer();
             setTimeout(() => {
                 setCurrentScene(prev => prev + 1);
                 setSlideDirection('');
@@ -66,6 +137,7 @@ export default function StoryPage() {
             setSlideDirection('slide-right');
             setIsAnimating(true);
             dismissTutorial();
+            resetHideTimer();
             setTimeout(() => {
                 setCurrentScene(prev => prev - 1);
                 setSlideDirection('');
@@ -79,6 +151,7 @@ export default function StoryPage() {
         touchStartX.current = e.touches[0].clientX;
         setIsSwiping(true);
         dismissTutorial();
+        resetHideTimer();
     };
 
     const handleTouchMove = (e) => {
@@ -96,9 +169,9 @@ export default function StoryPage() {
         const threshold = 50;
 
         if (swipeOffset < -threshold) {
-            goToNextScene(); // Swipe left = next
+            goToNextScene();
         } else if (swipeOffset > threshold) {
-            goToPrevScene(); // Swipe right = prev
+            goToPrevScene();
         }
 
         setSwipeOffset(0);
@@ -107,10 +180,13 @@ export default function StoryPage() {
 
     return (
         <div
+            ref={containerRef}
             className="fixed inset-0 bg-black overflow-hidden"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onMouseMove={handleInteraction}
+            onClick={handleInteraction}
         >
             {/* Scene Image with Slide Animation + Swipe Offset */}
             <div
@@ -120,7 +196,7 @@ export default function StoryPage() {
                 <img
                     src={getImagePath(currentScene)}
                     alt={`Scene ${currentScene}`}
-                    className="w-full h-full landscape:object-cover portrait:object-contain"
+                    className="w-full h-full object-contain"
                     loading="lazy"
                 />
             </div>
@@ -139,7 +215,6 @@ export default function StoryPage() {
                     onClick={dismissTutorial}
                 >
                     <div className="text-center text-white p-8 animate-fade-in">
-                        {/* Swipe Animation */}
                         <div className="flex items-center justify-center gap-8 mb-6">
                             <div className="flex items-center gap-2 animate-swipe-left">
                                 <span className="material-symbols-outlined text-4xl">swipe_left</span>
@@ -176,37 +251,73 @@ export default function StoryPage() {
                 </div>
             )}
 
-            {/* Progress Bar (Instagram-style) */}
-            <div className="absolute top-4 left-4 right-4 flex gap-1 z-20">
-                {Array.from({ length: TOTAL_SCENES }, (_, i) => (
-                    <div
-                        key={i}
-                        className={`h-1 flex-1 rounded-full transition-all ${i + 1 < currentScene
-                            ? 'bg-white'
-                            : i + 1 === currentScene
+            {/* Controls Container - Auto-hide like YouTube */}
+            <div className={`transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                {/* Progress Bar (Instagram-style) */}
+                <div className="absolute top-4 left-4 right-4 flex gap-1 z-20">
+                    {Array.from({ length: TOTAL_SCENES }, (_, i) => (
+                        <div
+                            key={i}
+                            className={`h-1 flex-1 rounded-full transition-all ${i + 1 < currentScene
                                 ? 'bg-white'
-                                : 'bg-white/30'
-                            }`}
-                    />
-                ))}
+                                : i + 1 === currentScene
+                                    ? 'bg-white'
+                                    : 'bg-white/30'
+                                }`}
+                        />
+                    ))}
+                </div>
+
+                {/* Navigation Arrows */}
+                <button
+                    onClick={goToPrevScene}
+                    disabled={currentScene === 1 || isAnimating}
+                    className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white transition-all z-20 ${currentScene === 1 ? 'opacity-0' : 'opacity-70 hover:opacity-100 hover:scale-110'}`}
+                >
+                    <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_left</span>
+                </button>
+
+                <button
+                    onClick={goToNextScene}
+                    disabled={currentScene >= TOTAL_SCENES || isAnimating}
+                    className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white transition-all z-20 ${currentScene >= TOTAL_SCENES ? 'opacity-0' : 'opacity-70 hover:opacity-100 hover:scale-110'}`}
+                >
+                    <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_right</span>
+                </button>
+
+                {/* Bottom Bar */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent z-20">
+                    <div className="flex items-center justify-between">
+                        {/* Logo */}
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FFD1DC] to-[#FFB6C1] flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                                NH
+                            </div>
+                            <span className="text-xs font-display font-medium text-white drop-shadow-lg">
+                                Na Haeo <span className="text-[#FFD1DC]">Glow</span>
+                            </span>
+                        </div>
+
+                        {/* Right side controls */}
+                        <div className="flex items-center gap-3">
+                            {/* Page Counter */}
+                            <div className="bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs">
+                                {currentScene} / {TOTAL_SCENES}
+                            </div>
+
+                            {/* Fullscreen Button */}
+                            <button
+                                onClick={toggleFullscreen}
+                                className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-all"
+                            >
+                                <span className="material-symbols-outlined text-xl">
+                                    {isFullscreen ? 'fullscreen_exit' : 'fullscreen'}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            {/* Navigation Arrows */}
-            <button
-                onClick={goToPrevScene}
-                disabled={currentScene === 1 || isAnimating}
-                className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white transition-all z-20 ${currentScene === 1 ? 'opacity-0' : 'opacity-70 hover:opacity-100 hover:scale-110'}`}
-            >
-                <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_left</span>
-            </button>
-
-            <button
-                onClick={goToNextScene}
-                disabled={currentScene >= TOTAL_SCENES || isAnimating}
-                className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white transition-all z-20 ${currentScene >= TOTAL_SCENES ? 'opacity-0' : 'opacity-70 hover:opacity-100 hover:scale-110'}`}
-            >
-                <span className="material-symbols-outlined text-xl sm:text-2xl">chevron_right</span>
-            </button>
 
             {/* Tap Areas (Left = prev, Right = next) */}
             <div
@@ -218,20 +329,12 @@ export default function StoryPage() {
                 onClick={goToNextScene}
             />
 
-            {/* Logo */}
-            <div className="absolute bottom-4 left-4 flex items-center gap-2 z-20">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FFD1DC] to-[#FFB6C1] flex items-center justify-center text-white font-bold text-xs shadow-lg">
-                    NH
+            {/* Show controls hint (when hidden) */}
+            {!showControls && (
+                <div className="absolute bottom-4 left-4 z-10">
+                    <div className="w-2 h-2 rounded-full bg-white/30 animate-pulse"></div>
                 </div>
-                <span className="text-xs font-display font-medium text-white drop-shadow-lg">
-                    Na Haeo <span className="text-[#FFD1DC]">Glow</span>
-                </span>
-            </div>
-
-            {/* Page Counter */}
-            <div className="absolute bottom-4 right-4 bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs z-20">
-                {currentScene} / {TOTAL_SCENES}
-            </div>
+            )}
 
             {/* Styles */}
             <style>{`
