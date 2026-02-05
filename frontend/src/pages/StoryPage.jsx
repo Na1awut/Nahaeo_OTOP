@@ -251,14 +251,14 @@ export default function StoryPage() {
                             height: hotspot.size.height,
                         }}
                     >
-                        {/* Water Ripple Effect - realistic wave with blur */}
+                        {/* Water Ripple Effect - responsive size */}
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            {/* Ripple rings with backdrop blur */}
-                            <div className="absolute w-24 h-24 rounded-full border-4 border-white/50 backdrop-blur-[2px] animate-ripple-1"></div>
-                            <div className="absolute w-24 h-24 rounded-full border-4 border-white/40 backdrop-blur-[2px] animate-ripple-2"></div>
-                            <div className="absolute w-24 h-24 rounded-full border-4 border-white/30 backdrop-blur-[1px] animate-ripple-3"></div>
+                            {/* Ripple rings - smaller base size for portrait */}
+                            <div className="absolute w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 sm:border-4 border-white/50 backdrop-blur-[1px] animate-ripple-1"></div>
+                            <div className="absolute w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 sm:border-4 border-white/40 backdrop-blur-[1px] animate-ripple-2"></div>
+                            <div className="absolute w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 sm:border-4 border-white/30 animate-ripple-3"></div>
                             {/* Center pulse */}
-                            <div className="relative w-6 h-6 rounded-full bg-white/70 shadow-lg pointer-events-auto animate-pulse-glow"></div>
+                            <div className="relative w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white/70 shadow-lg pointer-events-auto animate-pulse-glow"></div>
                         </div>
                     </button>
                 ))}
