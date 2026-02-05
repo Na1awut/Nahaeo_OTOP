@@ -3,6 +3,9 @@ import { useState, useRef, useEffect } from 'react';
 // Total number of scenes
 const TOTAL_SCENES = 19;
 
+// Get image path (WebP version)
+const getImagePath = (sceneNum) => `/images/scene/scene/${sceneNum}.webp`;
+
 export default function StoryPage() {
     const [currentScene, setCurrentScene] = useState(1);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -10,7 +13,28 @@ export default function StoryPage() {
     const [swipeOffset, setSwipeOffset] = useState(0);
     const [isSwiping, setIsSwiping] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
+    const [loadedImages, setLoadedImages] = useState(new Set([1]));
     const touchStartX = useRef(0);
+
+    // Preload adjacent images
+    useEffect(() => {
+        const imagesToLoad = [
+            currentScene - 1,
+            currentScene,
+            currentScene + 1,
+            currentScene + 2,
+        ].filter(n => n >= 1 && n <= TOTAL_SCENES);
+
+        imagesToLoad.forEach(sceneNum => {
+            if (!loadedImages.has(sceneNum)) {
+                const img = new Image();
+                img.src = getImagePath(sceneNum);
+                img.onload = () => {
+                    setLoadedImages(prev => new Set([...prev, sceneNum]));
+                };
+            }
+        });
+    }, [currentScene, loadedImages]);
 
     // Hide tutorial after first interaction or after 5 seconds
     useEffect(() => {
@@ -94,11 +118,19 @@ export default function StoryPage() {
                 style={{ transform: isSwiping ? `translateX(${swipeOffset}px)` : undefined }}
             >
                 <img
-                    src={`/images/scene/scene/${currentScene}.png`}
+                    src={getImagePath(currentScene)}
                     alt={`Scene ${currentScene}`}
                     className="w-full h-full landscape:object-cover portrait:object-contain"
+                    loading="lazy"
                 />
             </div>
+
+            {/* Loading indicator */}
+            {!loadedImages.has(currentScene) && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-30">
+                    <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                </div>
+            )}
 
             {/* Tutorial Overlay */}
             {showTutorial && (
