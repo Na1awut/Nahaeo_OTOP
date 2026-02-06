@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 // Total number of scenes
-const TOTAL_SCENES = 19;
+const TOTAL_SCENES = 20;
 
 // Get image path (WebP version)
 const getImagePath = (sceneNum) => `/images/scene/scene/${sceneNum}.webp`;
@@ -214,6 +214,7 @@ export default function StoryPage() {
     const [showControls, setShowControls] = useState(true);
     const [activeHotspot, setActiveHotspot] = useState(null);
     const [zoomedImage, setZoomedImage] = useState(null);
+    const [showHotspotTutorial, setShowHotspotTutorial] = useState(true);
     const touchStartX = useRef(0);
     const hideControlsTimer = useRef(null);
     const containerRef = useRef(null);
@@ -397,43 +398,114 @@ export default function StoryPage() {
             onMouseMove={handleInteraction}
             onClick={handleInteraction}
         >
-            {/* Scene Image with Slide Animation + Swipe Offset */}
-            <div
-                className={`absolute inset-0 flex items-center justify-center transition-transform ${isSwiping ? 'duration-0' : 'duration-300'} ease-out ${slideDirection}`}
-                style={{ transform: isSwiping ? `translateX(${swipeOffset}px)` : undefined }}
-            >
-                <img
-                    src={getImagePath(currentScene)}
-                    alt={`Scene ${currentScene}`}
-                    className="w-full h-full object-contain"
-                    loading="lazy"
-                />
-
-                {/* Hotspots for current scene */}
-                {currentHotspots.map((hotspot) => (
-                    <button
-                        key={hotspot.id}
-                        onClick={(e) => handleHotspotClick(e, hotspot)}
-                        className="absolute cursor-pointer group z-30"
-                        style={{
-                            top: hotspot.position.top,
-                            left: hotspot.position.left,
-                            width: hotspot.size.width,
-                            height: hotspot.size.height,
-                        }}
-                    >
-                        {/* Water Ripple Effect - responsive size */}
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            {/* Ripple rings - smaller base size for portrait */}
-                            <div className="absolute w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 sm:border-4 border-white/50 backdrop-blur-[1px] animate-ripple-1"></div>
-                            <div className="absolute w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 sm:border-4 border-white/40 backdrop-blur-[1px] animate-ripple-2"></div>
-                            <div className="absolute w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 sm:border-4 border-white/30 animate-ripple-3"></div>
-                            {/* Center pulse */}
-                            <div className="relative w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white/70 shadow-lg pointer-events-auto animate-pulse-glow"></div>
+            {/* Scene 20 - Special End Credits Layout */}
+            {currentScene === 20 ? (
+                <div
+                    className={`absolute inset-0 flex items-center justify-center bg-gradient-to-b from-[#1a1a2e] to-[#16213e] transition-transform ${isSwiping ? 'duration-0' : 'duration-300'} ease-out ${slideDirection}`}
+                    style={{ transform: isSwiping ? `translateX(${swipeOffset}px)` : undefined }}
+                >
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 p-6 max-w-5xl w-full">
+                        {/* Product Image - Portrait */}
+                        <div className="flex-shrink-0">
+                            <img
+                                src={getImagePath(20)}
+                                alt="Na Haeo Glow Product"
+                                className="h-[50vh] md:h-[70vh] w-auto object-contain rounded-2xl shadow-2xl"
+                            />
                         </div>
-                    </button>
-                ))}
-            </div>
+
+                        {/* End Credits */}
+                        <div className="text-white text-center md:text-left space-y-6">
+                            <h2 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FFD1DC] to-[#FFB6C1]">
+                                Credits
+                            </h2>
+
+                            {/* Team 1 */}
+                            <div className="space-y-2">
+                                <h3 className="font-semibold text-[#FFB6C1] text-sm md:text-base">ทีมออกแบบบรรจุภัณฑ์และสื่อประชาสัมพันธ์</h3>
+                                <div className="text-xs md:text-sm text-gray-300 space-y-1">
+                                    <p>นายณัฐวุฒิ นาพันผล : Web Dev</p>
+                                    <p>นายธนพล ชุมพล : ผู้จัดทำ Story</p>
+                                    <p>นางสาวนุตประวีณ์ ศรีแสงเมือง : จัดทำภาพ</p>
+                                </div>
+                            </div>
+
+                            {/* Team 2 */}
+                            <div className="space-y-2">
+                                <h3 className="font-semibold text-[#FFB6C1] text-sm md:text-base">ทีมวิจัยและพัฒนาผลิตภัณฑ์</h3>
+                                <div className="text-xs md:text-sm text-gray-300 space-y-1">
+                                    <p>นางสาวปิยะธิดาภรณ์ จันทะคุณ</p>
+                                    <p>นางสาวสิรภัทร แก้วสุวรรณ</p>
+                                    <p>นางสาวสุวิเนธ จันทะคุณ</p>
+                                </div>
+                            </div>
+
+                            <div className="pt-4">
+                                <p className="text-xs text-gray-500">© 2026 Na Haeo Glow</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                /* Normal Scene Layout */
+                <div
+                    className={`absolute inset-0 flex items-center justify-center transition-transform ${isSwiping ? 'duration-0' : 'duration-300'} ease-out ${slideDirection}`}
+                    style={{ transform: isSwiping ? `translateX(${swipeOffset}px)` : undefined }}
+                >
+                    <img
+                        src={getImagePath(currentScene)}
+                        alt={`Scene ${currentScene}`}
+                        className="w-full h-full object-contain"
+                        loading="lazy"
+                    />
+
+
+                    {/* Hotspots for current scene */}
+                    {currentHotspots.map((hotspot) => (
+                        <button
+                            key={hotspot.id}
+                            onClick={(e) => handleHotspotClick(e, hotspot)}
+                            className="absolute cursor-pointer group z-30"
+                            style={{
+                                top: hotspot.position.top,
+                                left: hotspot.position.left,
+                                width: hotspot.size.width,
+                                height: hotspot.size.height,
+                            }}
+                        >
+                            {/* Water Ripple Effect - responsive size */}
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                {/* Ripple rings - smaller base size for portrait */}
+                                <div className="absolute w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 sm:border-4 border-white/50 backdrop-blur-[1px] animate-ripple-1"></div>
+                                <div className="absolute w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 sm:border-4 border-white/40 backdrop-blur-[1px] animate-ripple-2"></div>
+                                <div className="absolute w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 sm:border-4 border-white/30 animate-ripple-3"></div>
+                                {/* Center pulse */}
+                                <div className="relative w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white/70 shadow-lg pointer-events-auto animate-pulse-glow"></div>
+                            </div>
+                        </button>
+                    ))}
+
+                    {/* Hotspot Tutorial - show on scene 2 */}
+                    {currentScene === 2 && showHotspotTutorial && currentHotspots.length > 0 && !activeHotspot && (
+                        <div
+                            className="absolute z-40 animate-bounce-slow"
+                            style={{
+                                top: 'calc(58% - 60px)',
+                                left: 'calc(42% + 20px)',
+                            }}
+                            onClick={() => setShowHotspotTutorial(false)}
+                        >
+                            <div className="bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg border border-pink-200 relative">
+                                <p className="text-sm font-medium text-gray-800 whitespace-nowrap">
+                                    👆 แตะเพื่อดูข้อมูลเพิ่มเติม
+                                </p>
+                                {/* Arrow pointing to hotspot */}
+                                <div className="absolute -bottom-2 left-0 w-3 h-3 bg-white/95 border-b border-l border-pink-200 transform rotate-[-45deg]"></div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Hotspot Modal */}
             {activeHotspot && (
@@ -470,16 +542,16 @@ export default function StoryPage() {
                         <div className="p-4 space-y-4">
                             {/* Image Grid - LINE style (compact) */}
                             {activeHotspot.content.images && activeHotspot.content.images.length > 0 && (
-                                <div className={`grid gap-1 rounded-xl overflow-hidden max-h-40 ${activeHotspot.content.images.length === 1 ? 'grid-cols-1' :
-                                    activeHotspot.content.images.length === 2 ? 'grid-cols-2' :
+                                <div className={`grid gap-1 rounded-xl overflow-hidden ${activeHotspot.content.images.length === 1 ? 'grid-cols-1 max-h-60' : 'max-h-40'
+                                    } ${activeHotspot.content.images.length === 2 ? 'grid-cols-2' :
                                         activeHotspot.content.images.length === 3 ? 'grid-cols-3' :
                                             activeHotspot.content.images.length === 4 ? 'grid-cols-4' :
-                                                'grid-cols-5'
+                                                activeHotspot.content.images.length >= 5 ? 'grid-cols-5' : ''
                                     }`}>
                                     {activeHotspot.content.images.map((img, idx) => (
                                         <div
                                             key={idx}
-                                            className={`overflow-hidden cursor-pointer ${activeHotspot.content.images.length === 1 ? 'aspect-video' :
+                                            className={`overflow-hidden cursor-pointer ${activeHotspot.content.images.length === 1 ? 'aspect-[3/4]' :
                                                 activeHotspot.content.images.length === 3 && idx === 0 ? 'row-span-2 aspect-square' :
                                                     'aspect-square'
                                                 }`}
@@ -716,6 +788,15 @@ export default function StoryPage() {
                 @keyframes fadeIn {
                     from { opacity: 0; transform: scale(0.95); }
                     to { opacity: 1; transform: scale(1); }
+                }
+
+                @keyframes bounceSlow {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-8px); }
+                }
+
+                .animate-bounce-slow {
+                    animation: bounceSlow 1.5s ease-in-out infinite;
                 }
 
                 @keyframes swipeLeftAnim {
