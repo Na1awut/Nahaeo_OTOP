@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import StoryPage from './StoryPage';
 
 export default function HomePage() {
+    // TEMPORARILY DISABLED: Verification check
+    // To re-enable, uncomment the verification logic below
+
+    /*
     const navigate = useNavigate();
     const [isVerified, setIsVerified] = useState(null);
 
@@ -36,6 +40,7 @@ export default function HomePage() {
             </div>
         );
     }
+    */
 
     return <StoryPage />;
 }
