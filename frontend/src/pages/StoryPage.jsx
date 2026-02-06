@@ -26,9 +26,9 @@ const sceneHotspots = {
                 icon: '🏔️',
                 // Real images
                 images: [
-                    '/images/real_image/1.jpg',
-                    '/images/real_image/2.jpg',
-                    '/images/real_image/3.jpg'
+                    '/images/real_image/1.webp',
+                    '/images/real_image/2.webp',
+                    '/images/real_image/3.webp'
                 ],
                 // Google Maps data
                 mapUrl: 'https://www.google.com/maps?q=17.363754,101.051384',
@@ -54,6 +54,11 @@ const sceneHotspots = {
 
 มัวศรีโพธิ์ซึ่งเก่าแก่กว่า 400 ปีเป็นศูนย์กลางศรัทธา ชาวบ้านดำเนินชีวิตด้วยการทำนาและปลูกพืชไร่ในหุบเขา พร้อมทั้งบริหารจัดการการท่องเที่ยวโดยชุมชนเองในรูปแบบโฮมสเตย์และการนำเที่ยวเชิงอนุรักษ์ เพื่อรักษาความเรียบง่ายและทรัพยากรท้องถิ่นให้ยั่งยืน`,
                 icon: '⛰️',
+                images: [
+                    '/images/real_image/5.webp',
+                    '/images/real_image/6.webp',
+                    '/images/real_image/7.webp'
+                ],
                 mapUrl: 'https://www.google.com/maps?q=17.503052,101.089157',
                 coordinates: { lat: 17.503052, lng: 101.089157 }
             }
@@ -75,6 +80,12 @@ const sceneHotspots = {
 
 และไม่นานมานี้ บริเวณชายแดนไทย-ลาว บ้านเหมืองแพร่ มีถนนคนเดินริมเหืองในเวลาช่วงเย็น ทุกวันเสาร์และวันพระ`,
                 icon: '🛃',
+                images: [
+                    '/images/real_image/8.webp',
+                    '/images/real_image/9.webp',
+                    '/images/real_image/10.webp',
+                    '/images/real_image/11.webp'
+                ],
                 mapUrl: 'https://www.google.com/maps?q=17.504158,101.076790',
                 coordinates: { lat: 17.504158, lng: 101.076790 }
             }
@@ -181,6 +192,7 @@ export default function StoryPage() {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [showControls, setShowControls] = useState(true);
     const [activeHotspot, setActiveHotspot] = useState(null);
+    const [zoomedImage, setZoomedImage] = useState(null);
     const touchStartX = useRef(0);
     const hideControlsTimer = useRef(null);
     const containerRef = useRef(null);
@@ -435,6 +447,32 @@ export default function StoryPage() {
 
                         {/* Content */}
                         <div className="p-4 space-y-4">
+                            {/* Image Grid - LINE style (compact) */}
+                            {activeHotspot.content.images && activeHotspot.content.images.length > 0 && (
+                                <div className={`grid gap-1 rounded-xl overflow-hidden max-h-40 ${activeHotspot.content.images.length === 1 ? 'grid-cols-1' :
+                                    activeHotspot.content.images.length === 2 ? 'grid-cols-2' :
+                                        activeHotspot.content.images.length === 3 ? 'grid-cols-3' :
+                                            'grid-cols-4'
+                                    }`}>
+                                    {activeHotspot.content.images.map((img, idx) => (
+                                        <div
+                                            key={idx}
+                                            className={`overflow-hidden cursor-pointer ${activeHotspot.content.images.length === 1 ? 'aspect-video' :
+                                                activeHotspot.content.images.length === 3 && idx === 0 ? 'row-span-2 aspect-square' :
+                                                    'aspect-square'
+                                                }`}
+                                            onClick={() => setZoomedImage(img)}
+                                        >
+                                            <img
+                                                src={img}
+                                                alt={`${activeHotspot.content.title} ${idx + 1}`}
+                                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                             <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
                                 {activeHotspot.content.description}
                             </p>
@@ -469,6 +507,30 @@ export default function StoryPage() {
                             )}
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* Image Lightbox */}
+            {zoomedImage && (
+                <div
+                    className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center animate-fade-in"
+                    onClick={() => setZoomedImage(null)}
+                >
+                    {/* Close button */}
+                    <button
+                        onClick={() => setZoomedImage(null)}
+                        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors z-10"
+                    >
+                        <span className="material-symbols-outlined text-xl">close</span>
+                    </button>
+
+                    {/* Zoomed image */}
+                    <img
+                        src={zoomedImage}
+                        alt="Zoomed"
+                        className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-zoom-in"
+                        onClick={(e) => e.stopPropagation()}
+                    />
                 </div>
             )}
 
@@ -663,6 +725,21 @@ export default function StoryPage() {
 
                 .animate-scale-in {
                     animation: scaleIn 0.3s ease-out;
+                }
+
+                @keyframes zoomIn {
+                    from { 
+                        opacity: 0; 
+                        transform: scale(0.5); 
+                    }
+                    to { 
+                        opacity: 1; 
+                        transform: scale(1); 
+                    }
+                }
+
+                .animate-zoom-in {
+                    animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 }
 
                 /* Water Ripple Effect - smaller but more intense */
