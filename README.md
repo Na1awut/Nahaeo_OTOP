@@ -1,62 +1,57 @@
-# 📁 โครงสร้างโปรเจค Na Haeo Botanics
+# Na Haeo Glow
 
-## โครงสร้างไฟล์
+A product website for an organic macadamia lip balm from a Thai school science project in Na Haeo. Scanning a product's NFC tag or QR code verifies the item and opens a page about the product and its local story.
 
-```
-nahaeo/
-├── landing_page.html          # หน้าเว็บหลัก
-├── assets/                    # ไฟล์ทรัพยากรทั้งหมด
-│   ├── models/               # โมเดล 3D (.glb, .gltf, .usdz)
-│   │   ├── wat-si-pho-chai/  # วัดศรีโพธิ์ชัย
-│   │   ├── phu-khao-ngom/    # ภูเก้าง้อม
-│   │   ├── ton-dok-mai/      # ต้นดอกไม้ยักษ์
-│   │   └── products/         # สินค้า
-│   │       ├── rose-petal/   # ลิปบาล์ม กลีบกุหลาบ
-│   │       ├── peach-honey/  # ลิปบาล์ม พีชน้ำผึ้ง
-│   │       └── fresh-mint/   # ลิปบาล์ม มิ้นต์สดชื่น
-│   ├── images/               # รูปภาพ
-│   │   ├── landmarks/        # รูปสถานที่
-│   │   └── products/         # รูปสินค้า
-│   └── videos/               # วิดีโอ
-└── .agent/                   # ไฟล์ AI skill
-```
+## Features
 
-## การใช้งานโมเดล 3D
+- **Product verification:** `/verify` checks a product ID against Firestore and records the scan
+- **Product storytelling:** a home page with a flip-book story of the products and Na Haeo
+- **Scan tracking:** scan events are stored for each product
+- **WebAR prototype:** the root `index.html` is an earlier "Tap to Bloom" static prototype using `model-viewer`
 
-### รูปแบบไฟล์ที่รองรับ
-- `.glb` - สำหรับ Web (แนะนำ)
-- `.gltf` - สำหรับ Web
-- `.usdz` - สำหรับ iOS AR Quick Look
+## Tech stack
 
-### ตัวอย่างการใส่โมเดล
-```html
-<model-viewer 
-    src="./assets/models/wat-si-pho-chai/model.glb"
-    ios-src="./assets/models/wat-si-pho-chai/model.usdz"
-    alt="วัดศรีโพธิ์ชัย"
-    ar
-    ar-modes="webxr scene-viewer quick-look"
-    camera-controls>
-</model-viewer>
+React 19, Vite (rolldown), Tailwind CSS 4, React Router, Firebase Firestore and Analytics, `html5-qrcode`, `react-pageflip`, and Render static hosting.
+
+## Getting started
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-## สถานที่สำคัญ
+Other commands:
 
-| โฟลเดอร์ | สถานที่ | รายละเอียด |
-|---------|--------|-----------|
-| `wat-si-pho-chai` | วัดศรีโพธิ์ชัย | วัดเก่าแก่สไตล์ล้านช้าง |
-| `phu-khao-ngom` | ภูเก้าง้อม | จุดชมวิวที่สวยงาม |
-| `ton-dok-mai` | ต้นดอกไม้ | ประเพณีแห่ต้นดอกไม้ประเพณี 400 ปี |
+```bash
+npm run build
+npm run lint
+npm run preview
+```
 
-## สินค้า
+### Firebase
 
-| โฟลเดอร์ | สินค้า | กลิ่น |
-|---------|-------|------|
-| `rose-petal` | Na Haeo Botanics | กลีบกุหลาบ |
-| `peach-honey` | Na Haeo Creamy | พีชน้ำผึ้ง |
-| `fresh-mint` | Na Haeo Mint | มิ้นต์สดชื่น |
+The Firebase web config is in `frontend/src/lib/firebase.js`. To use your own project, replace that config and seed products with `frontend/scripts/seed-products.mjs`, which has its own copy of the config. A Firebase web config is not a password, so protect the data with Firestore security rules.
 
----
+## Deployment
 
-> 📌 **หมายเหตุ:** เมื่อมีโมเดล 3D พร้อม ให้วางไฟล์ในโฟลเดอร์ที่เกี่ยวข้อง
-> แล้วอัปเดต path ใน `landing_page.html`
+[`render.yaml`](render.yaml) deploys `frontend/` as a static site on Render and rewrites every route to `index.html`.
+
+## Project structure
+
+```text
+frontend/        Current React app
+  src/pages/     HomePage, StoryPage and VerifyPage
+  src/lib/       Firebase helpers
+  scripts/       Image conversion and product seeding
+index.html       Earlier WebAR prototype
+verify.html      Earlier verification page
+js/, css/        Prototype scripts and styles
+assets/models/   Folders and notes for 3D models
+โครงงาน.md       Science project report (Thai)
+project.pdf      Science project document
+```
+
+## 3D models
+
+Put models in `assets/models/<name>/`. Use `.glb` or `.gltf` for the web and `.usdz` for iOS AR Quick Look.
